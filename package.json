@@ -11,7 +11,7 @@
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-pattern .gitignore",
     "format": "prettier --write src/",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "dependencies": {
     "esbuild": "^0.25.4",
@@ -19,7 +19,6 @@
     "vue": "^3.5.13"
   },
   "devDependencies": {
-    "@commitlint/config-conventional": "^19.8.1",
     "@eslint/js": "^9.26.0",
     "@tailwindcss/vite": "^4.1.6",
     "@tsconfig/node18": "^18.2.4",
@@ -31,7 +30,6 @@
     "@vue/eslint-config-typescript": "^14.5.0",
     "@vue/tsconfig": "^0.4.0",
     "autoprefixer": "^10.4.21",
-    "commitlint": "^19.8.1",
     "eslint": "^9.26.0",
     "eslint-plugin-prettier": "^5.4.0",
     "eslint-plugin-vue": "^9.33.0",
