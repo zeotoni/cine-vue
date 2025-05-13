@@ -1,10 +1,10 @@
-import pluginJs from '@eslint/js';
-import vueConfigPrettier from '@vue/eslint-config-prettier';
-import vueConfigTypescript from '@vue/eslint-config-typescript';
-import prettier from 'eslint-plugin-prettier/recommended';
-import pluginVue from 'eslint-plugin-vue';
-import globals from 'globals';
-import tseslint from 'typescript-eslint';
+import pluginJs from '@eslint/js'
+import vueConfigPrettier from '@vue/eslint-config-prettier'
+import vueConfigTypescript from '@vue/eslint-config-typescript'
+import prettier from 'eslint-plugin-prettier/recommended'
+import pluginVue from 'eslint-plugin-vue'
+import globals from 'globals'
+import tseslint from 'typescript-eslint'
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
@@ -71,4 +71,4 @@ export default [
       'prettier/prettier': ['warn', { singleQuote: true }],
     },
   },
-];
+]
