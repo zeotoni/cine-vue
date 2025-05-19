@@ -1,0 +1,16 @@
+@theme {
+  --font-poppins: Poppins, sans-serif;
+
+  --font-weight-fw1: 400;
+  --font-weight-fw2: 500;
+  --font-weight-fw3: 700;
+
+  --text-fs-1: clamp(0.8333rem, 0.74rem + 0.4667vi, 1.3rem);
+  --text-fs-2: clamp(1rem, 0.875rem + 0.625vi, 1.625rem);
+  --text-fs-3: clamp(1.2rem, 1.0338rem + 0.8313vi, 2.0313rem);
+  --text-fs-4: clamp(1.44rem, 1.2202rem + 1.0991vi, 2.5391rem);
+  --text-fs-5: clamp(2.0736rem, 1.6949rem + 1.8937vi, 3.9673rem);
+
+  --leading-relaxed: 1.6;
+  --leading-tight: 1.2;
+}

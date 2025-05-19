@@ -1,0 +1,10 @@
+@theme {
+  --color-primaryBg: #111827;
+  --color-secondaryBg: #1f2937;
+  --color-primaryBadge: #2563eb;
+  --color-rating: #fbbf24;
+  --color-primaryHeading: #fff;
+  --color-secondaryHeading: #000;
+  --color-primaryText: #fffc;
+  --color-secondaryText: #4b5563;
+}

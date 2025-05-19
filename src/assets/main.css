@@ -1,4 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
 @import 'tailwindcss';
+@import './css/colors.css';
+@import './css/typografy.css';
+
+body {
+  font-family: var(--font-poppins);
+  background-color: var(--color-primaryBg);
+}
 
 ul {
   list-style: none;
