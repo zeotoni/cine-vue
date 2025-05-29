@@ -13,15 +13,13 @@ export default {
   },
 
   async mounted() {
-    getPopularMovies()
-      .then((response) => {
-        const movies: MovieCardData[] = response.data.results
-        const r = Math.floor(Math.random() * movies.length)
-        this.movie = movies[r]
-      })
-      .catch((error) => {
-        console.error('Erro ao buscar filmes:', error)
-      })
+    try {
+      const movies = await getPopularMovies()
+      const r = Math.floor(Math.random() * movies.length)
+      this.movie = movies[r]
+    } catch (error) {
+      console.error('Erro ao buscar filme em destaque:', error)
+    }
   },
 
   methods: {
@@ -36,7 +34,10 @@ export default {
 </script>
 
 <template>
-  <section class="relative w-full overflow-hidden rounded-xl">
+  <section
+    v-if="movie?.title"
+    class="relative w-full overflow-hidden rounded-xl"
+  >
     <picture>
       <img
         class="rounded-xl object-cover w-full h-[400px] sm:h-[500px] md:h-[600px]"
