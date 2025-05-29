@@ -27,7 +27,7 @@ export default {
     <ul
       class="grid grid-flow-col auto-cols-[300px] gap-4 overflow-x-auto gap-4"
     >
-      <li v-for="movie in movies" :key="movie.id">
+      <li v-for="movie in movies" :key="movie.title">
         <CardMovie :cardData="movie" />
       </li>
     </ul>
