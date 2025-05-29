@@ -1,7 +1,9 @@
 export default interface MovieCardData {
-  imgUrl: string
   title: string
-  genre: string
-  year: number
-  rate: number
+  genre_ids: number[]
+  release_date: number
+  overview: string
+  backdrop_path: string
+  poster_path: string
+  vote_average: number
 }
