@@ -29,7 +29,7 @@ export default {
 </script>
 
 <template>
-  <section class="flex flex-col gap-10 container mx-auto px-2 py-8">
+  <section class="flex flex-col gap-10 container mx-auto px-4 py-8">
     <FeaturedMovie></FeaturedMovie>
     <CardList :title="'Top Rated'" :movies="moviesTopRated"></CardList>
     <CardList :title="'Upcoming'" :movies="moviesUpComing"></CardList>

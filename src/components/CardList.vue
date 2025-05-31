@@ -25,9 +25,9 @@ export default {
     <h4 class="text-fs-3 font-fw3 text-primaryHeading mb-3">{{ title }}</h4>
 
     <ul
-      class="grid grid-flow-col auto-cols-[300px] gap-4 overflow-x-auto gap-4"
+      class="grid grid-flow-col gap-2 lg:gap-4 auto-cols-[45%] sm:auto-cols-[40%] md:auto-cols-[22%] lg:auto-cols-[18%] xl:auto-cols-[15%] snap-x snap-mandatory overflow-x-auto scroll-smooth [-ms-overflow-style:'none'] [scrollbar-width:'none'] [-webkit-overflow-scrolling:touch] [&::-webkit-scrollbar]:hidden"
     >
-      <li v-for="movie in movies" :key="movie.title">
+      <li v-for="movie in movies" :key="movie.title" class="snap-start">
         <CardMovie :cardData="movie" />
       </li>
     </ul>
