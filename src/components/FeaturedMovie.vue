@@ -89,7 +89,7 @@ export default {
         >
       </div>
       <p
-        class="text-primaryText text-fs-2 mb-6 max-w-3xl leading-relaxed line-clamp-4 overflow-y-auto scrollbar-hide md:line-clamp-none"
+        class="text-primaryText text-fs-2 mb-6 max-w-3xl leading-relaxed line-clamp-4 overflow-y-auto scrollbar-hide md:line-clamp-none [-ms-overflow-style:'none'] [scrollbar-width:'none'] [-webkit-overflow-scrolling:touch] [&::-webkit-scrollbar]:hidden"
       >
         {{ movie?.overview }}
       </p>
