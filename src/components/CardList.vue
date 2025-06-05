@@ -1,7 +1,7 @@
 <script lang="ts">
 import type MovieCardData from '@/interfaces/MovieCardData'
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
-import type { PropType } from 'vue'
+import { type PropType } from 'vue'
 import CardMovie from './CardMovie.vue'
 
 export default {
@@ -20,13 +20,38 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      scrollEnd: true,
+      scrollStart: false,
+    }
+  },
+
   methods: {
+    getScrollContainer() {
+      return this.$refs.scrollContainer as HTMLUListElement | null
+    },
+
     scroll(direction: string) {
-      const container = this.$refs.scrollContainer as HTMLUListElement | null
+      const container = this.getScrollContainer()
+
       if (container) {
         const amount =
           direction === 'left' ? -container.clientWidth : container.clientWidth
         container.scrollBy({ left: amount, behavior: 'smooth' })
+        this.handleScroll()
+      }
+    },
+
+    handleScroll() {
+      const container = this.getScrollContainer()
+
+      if (container) {
+        this.scrollStart = container.scrollLeft > 0
+
+        this.scrollEnd =
+          container.scrollLeft + container.clientWidth + 5 <
+          container.scrollWidth
       }
     },
   },
@@ -40,6 +65,7 @@ export default {
     <ul
       ref="scrollContainer"
       class="grid grid-flow-col gap-2 lg:gap-4 auto-cols-[45%] sm:auto-cols-[40%] md:auto-cols-[22%] lg:auto-cols-[18%] xl:auto-cols-[15%] snap-x snap-mandatory overflow-x-auto scroll-smooth [-ms-overflow-style:'none'] [scrollbar-width:'none'] [-webkit-overflow-scrolling:touch] [&::-webkit-scrollbar]:hidden"
+      @scroll="handleScroll"
     >
       <li v-for="movie in movies" :key="movie.title" class="snap-start">
         <CardMovie :cardData="movie" />
@@ -47,12 +73,13 @@ export default {
     </ul>
 
     <div
-      class="hidden md:flex justify-between gap-8 mt-4"
+      class="hidden relative md:flex mt-4 mb-5"
       role="group"
       aria-label="Scroll buttons"
     >
       <button
-        class="text-primaryHeading border p-2 hover:bg-primaryText hover:text-secondaryHeading transition-colors duration-300"
+        v-if="scrollStart"
+        class="absolute left-0 text-primaryHeading border p-2 hover:bg-primaryText hover:text-secondaryHeading transition-colors duration-300"
         aria-label="Scroll left"
         @click="scroll('left')"
       >
@@ -60,7 +87,8 @@ export default {
       </button>
 
       <button
-        class="text-primaryHeading border p-2 hover:bg-primaryText hover:text-secondaryHeading transition-colors duration-300"
+        v-if="scrollEnd"
+        class="absolute right-0 text-primaryHeading border p-2 hover:bg-primaryText hover:text-secondaryHeading transition-colors duration-300"
         aria-label="Scroll right"
         @click="scroll('right')"
       >
