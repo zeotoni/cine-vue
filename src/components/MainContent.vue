@@ -3,11 +3,13 @@ import { getTopRated, getUpComing } from '@/http'
 import type MovieCardData from '@/interfaces/MovieCardData'
 import CardList from './CardList.vue'
 import FeaturedMovie from './FeaturedMovie.vue'
+import SidebarFilters from './SidebarFilters.vue'
 
 export default {
   components: {
     FeaturedMovie,
     CardList,
+    SidebarFilters,
   },
 
   data() {
@@ -29,9 +31,15 @@ export default {
 </script>
 
 <template>
-  <section class="flex flex-col gap-10 container mx-auto px-4 py-8">
-    <FeaturedMovie></FeaturedMovie>
-    <CardList :title="'Top Rated'" :movies="moviesTopRated"></CardList>
-    <CardList :title="'Upcoming'" :movies="moviesUpComing"></CardList>
-  </section>
+  <div class="lg:flex">
+    <SidebarFilters class="lg:w-[25%]"></SidebarFilters>
+
+    <main class="lg:w-[75%] p-4 md:p-6 lg:p-8">
+      <section class="flex flex-col gap-10">
+        <FeaturedMovie></FeaturedMovie>
+        <CardList :title="'Top Rated'" :movies="moviesTopRated"></CardList>
+        <CardList :title="'Upcoming'" :movies="moviesUpComing"></CardList>
+      </section>
+    </main>
+  </div>
 </template>
