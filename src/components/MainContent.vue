@@ -1,5 +1,6 @@
 <script lang="ts">
 import { getTopRated, getUpComing } from '@/http'
+import type FilterData from '@/interfaces/FilterData'
 import type MovieCardData from '@/interfaces/MovieCardData'
 import CardList from './CardList.vue'
 import FeaturedMovie from './FeaturedMovie.vue'
@@ -16,6 +17,7 @@ export default {
     return {
       moviesTopRated: [] as MovieCardData[],
       moviesUpComing: [] as MovieCardData[],
+      search: {} as FilterData,
     }
   },
 
@@ -27,12 +29,22 @@ export default {
       console.error('Erro ao buscar filmes:', error)
     }
   },
+
+  methods: {
+    searchData(search: FilterData) {
+      this.search = search
+      console.log('Search data received in MainContent:', this.search)
+    },
+  },
 }
 </script>
 
 <template>
   <div class="lg:flex">
-    <SidebarFilters class="lg:w-[25%]"></SidebarFilters>
+    <SidebarFilters
+      class="lg:w-[25%]"
+      @update:search="searchData"
+    ></SidebarFilters>
 
     <main class="lg:w-[75%] p-4 md:p-6 lg:p-8">
       <section class="flex flex-col gap-10">
