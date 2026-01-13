@@ -6,6 +6,13 @@ import CardList from './CardList.vue'
 import FeaturedMovie from './FeaturedMovie.vue'
 import SidebarFilters from './SidebarFilters.vue'
 
+const defaultFilters: FilterData = {
+  title: '',
+  genre: 'all',
+  fromYear: '',
+  toYear: '',
+}
+
 export default {
   components: {
     FeaturedMovie,
@@ -17,8 +24,19 @@ export default {
     return {
       moviesTopRated: [] as MovieCardData[],
       moviesUpComing: [] as MovieCardData[],
-      search: {} as FilterData,
+      search: { ...defaultFilters },
     }
+  },
+
+  computed: {
+    isFilteringActive(): boolean {
+      return (
+        this.search.title.trim() !== '' ||
+        this.search.genre !== 'all' ||
+        this.search.fromYear !== '' ||
+        this.search.toYear !== ''
+      )
+    },
   },
 
   async created() {
@@ -33,7 +51,6 @@ export default {
   methods: {
     searchData(search: FilterData) {
       this.search = search
-      console.log('Search data received in MainContent:', this.search)
     },
   },
 }
