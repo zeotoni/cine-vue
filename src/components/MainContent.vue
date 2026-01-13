@@ -64,9 +64,13 @@ export default {
     ></SidebarFilters>
 
     <main class="lg:w-[75%] p-4 md:p-6 lg:p-8">
-      <section class="flex flex-col gap-10">
+      <section v-if="!isFilteringActive" class="flex flex-col gap-10">
         <FeaturedMovie></FeaturedMovie>
         <CardList :title="'Top Rated'" :movies="moviesTopRated"></CardList>
+        <CardList :title="'Upcoming'" :movies="moviesUpComing"></CardList>
+      </section>
+
+      <section v-if="isFilteringActive" class="flex flex-col gap-10">
         <CardList :title="'Upcoming'" :movies="moviesUpComing"></CardList>
       </section>
     </main>
