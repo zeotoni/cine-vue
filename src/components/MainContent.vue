@@ -24,6 +24,7 @@ export default {
     return {
       moviesTopRated: [] as MovieCardData[],
       moviesUpComing: [] as MovieCardData[],
+      baseList: [] as MovieCardData[],
       search: { ...defaultFilters },
     }
   },
@@ -37,12 +38,43 @@ export default {
         this.search.toYear !== ''
       )
     },
+
+    filteredMovies(): MovieCardData[] {
+      return this.baseList.filter((el: MovieCardData) => {
+        if (this.search.title) {
+          if (!el.title.toLowerCase().includes(this.search.title)) {
+            return false
+          }
+        }
+
+        if (this.search.fromYear) {
+          if (el.release_date.substring(0, 4) < this.search.fromYear) {
+            return false
+          }
+        }
+
+        if (this.search.toYear) {
+          if (el.release_date.substring(0, 4) > this.search.toYear) {
+            return false
+          }
+        }
+
+        if (this.search.genre != 'all') {
+          if (!el.genre_ids.includes(Number(this.search.genre))) {
+            return false
+          }
+        }
+
+        return true
+      })
+    },
   },
 
   async created() {
     try {
       this.moviesTopRated = await getTopRated()
       this.moviesUpComing = await getUpComing()
+      this.baseList = [...this.moviesUpComing, ...this.moviesTopRated]
     } catch (error) {
       console.error('Erro ao buscar filmes:', error)
     }
@@ -71,7 +103,10 @@ export default {
       </section>
 
       <section v-if="isFilteringActive" class="flex flex-col gap-10">
-        <CardList :title="'Upcoming'" :movies="moviesUpComing"></CardList>
+        <CardList
+          :title="'Filtered Movies'"
+          :movies="filteredMovies"
+        ></CardList>
       </section>
     </main>
   </div>
