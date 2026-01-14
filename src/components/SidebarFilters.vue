@@ -1,5 +1,44 @@
 <script lang="ts">
-export default {}
+import type FilterData from '@/interfaces/FilterData'
+
+export default {
+  emits: ['update:search'],
+
+  data() {
+    return {
+      search: {
+        title: '',
+        genre: 'all',
+        fromYear: '',
+        toYear: '',
+      } as FilterData,
+    }
+  },
+
+  watch: {
+    search: {
+      handler() {
+        this.updateSearch()
+      },
+      deep: true,
+    },
+  },
+
+  methods: {
+    resetFilters() {
+      this.search = {
+        title: '',
+        genre: 'all',
+        fromYear: '',
+        toYear: '',
+      }
+    },
+
+    updateSearch() {
+      this.$emit('update:search', this.search)
+    },
+  },
+}
 </script>
 
 <template>
@@ -10,6 +49,7 @@ export default {}
       <label for="title" class="text-primaryHeading mb-2 block">Title</label>
       <input
         id="title"
+        v-model="search.title"
         type="text"
         placeholder="Type the title of the movie"
         class="text-primaryHeading border border-white rounded-md w-full py-1 px-2 bg-gray-800"
@@ -22,6 +62,7 @@ export default {}
       <div class="grid grid-cols-1">
         <select
           id="genre"
+          v-model="search.genre"
           class="text-primaryHeading border border-white rounded-md w-full py-1 px-2 bg-gray-800 col-start-1 row-start-1 appearance-none"
         >
           <option value="all">All</option>
@@ -68,6 +109,7 @@ export default {}
         <label for="fromYear" class="sr-only">From year</label>
         <input
           id="fromYear"
+          v-model="search.fromYear"
           placeholder="YYYY"
           inputmode="numeric"
           type="text"
@@ -81,6 +123,7 @@ export default {}
         <label for="toYear" class="sr-only">To year</label>
         <input
           id="toYear"
+          v-model="search.toYear"
           placeholder="YYYY"
           inputmode="numeric"
           type="text"
@@ -95,6 +138,7 @@ export default {}
       <button
         type="button"
         class="text-primaryHeading border w-full py-2 rounded-md hover:bg-primaryText hover:text-secondaryHeading transition-colors duration-300"
+        @click="resetFilters"
       >
         Reset Filters
       </button>
