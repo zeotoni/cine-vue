@@ -26,6 +26,7 @@ export default {
       moviesUpComing: [] as MovieCardData[],
       discoveredMovies: [] as MovieCardData[],
       search: { ...defaultFilters },
+      loading: false,
     }
   },
 
@@ -52,6 +53,7 @@ export default {
   methods: {
     searchData(search: FilterData) {
       this.search = search
+      this.loading = true
       if (!this.isFilteringActive) {
         this.discoveredMovies = []
         return
@@ -64,6 +66,8 @@ export default {
         this.discoveredMovies = await getMoviesBySearch(this.search)
       } catch (error) {
         console.error('Erro ao buscar filmes:', error)
+      } finally {
+        this.loading = false
       }
     },
   },
@@ -85,10 +89,21 @@ export default {
       </section>
 
       <section v-if="isFilteringActive" class="flex flex-col gap-10">
-        <CardList
-          :title="'Filtered Movies'"
-          :movies="discoveredMovies"
-        ></CardList>
+        <p v-if="loading" class="text-primaryHeading text-fs-3">
+          Carregando...
+        </p>
+        <p
+          v-else-if="discoveredMovies.length === 0"
+          class="text-primaryHeading text-fs-3"
+        >
+          Nenhum filme encontrado
+        </p>
+        <div v-else>
+          <CardList
+            :title="'Filtered Movies'"
+            :movies="discoveredMovies"
+          ></CardList>
+        </div>
       </section>
     </main>
   </div>
