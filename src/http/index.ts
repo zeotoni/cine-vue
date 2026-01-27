@@ -50,12 +50,14 @@ export async function getMoviesBySearch(filter: FilterData) {
   }
 
   if (filter.fromYear !== '') {
-    params['primary_release_date.gte'] = filter.fromYear
+    params['primary_release_date.gte'] = filter.fromYear + '-01-01'
   }
 
   if (filter.toYear !== '') {
-    params['primary_release_date.lte'] = filter.toYear
+    params['primary_release_date.lte'] = filter.toYear + '-12-31'
   }
+
+  params.sort_by = 'release_date.asc'
 
   const response = await tmdb.get(`discover/movie`, {
     params,
