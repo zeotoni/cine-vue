@@ -1,3 +1,4 @@
+import type FilterData from '@/interfaces/FilterData'
 import type MovieCardData from '@/interfaces/MovieCardData'
 import axios from 'axios'
 
@@ -28,4 +29,31 @@ export async function getUpComing() {
   const upcomingMovies: MovieCardData[] = response.data.results
 
   return upcomingMovies
+}
+
+export async function getMoviesBySearch(filter: FilterData) {
+  const params: Record<string, string | number> = {}
+
+  if (filter.title.trim() !== '') {
+    params.query = filter.title
+  }
+
+  if (filter.genre !== 'all') {
+    params.with_genres = filter.genre
+  }
+
+  if (filter.fromYear !== '') {
+    params['primary_release_date.gte'] = filter.fromYear
+  }
+
+  if (filter.toYear !== '') {
+    params['primary_release_date.lte'] = filter.toYear
+  }
+
+  const response = await tmdb.get(`discover/movie`, {
+    params,
+  })
+  const foundMovies: MovieCardData[] = response.data.results
+
+  return foundMovies
 }
