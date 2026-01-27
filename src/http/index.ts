@@ -36,6 +36,13 @@ export async function getMoviesBySearch(filter: FilterData) {
 
   if (filter.title.trim() !== '') {
     params.query = filter.title
+
+    const response = await tmdb.get(`search/movie`, {
+      params,
+    })
+    const foundMovies: MovieCardData[] = response.data.results
+
+    return foundMovies
   }
 
   if (filter.genre !== 'all') {
