@@ -1,5 +1,5 @@
 <script lang="ts">
-import { getTopRated, getUpComing } from '@/http'
+import { getMoviesBySearch, getTopRated, getUpComing } from '@/http'
 import type FilterData from '@/interfaces/FilterData'
 import type MovieCardData from '@/interfaces/MovieCardData'
 import CardList from './CardList.vue'
@@ -24,8 +24,9 @@ export default {
     return {
       moviesTopRated: [] as MovieCardData[],
       moviesUpComing: [] as MovieCardData[],
-      baseList: [] as MovieCardData[],
+      discoveredMovies: [] as MovieCardData[],
       search: { ...defaultFilters },
+      loading: false,
     }
   },
 
@@ -38,43 +39,12 @@ export default {
         this.search.toYear !== ''
       )
     },
-
-    filteredMovies(): MovieCardData[] {
-      return this.baseList.filter((el: MovieCardData) => {
-        if (this.search.title) {
-          if (!el.title.toLowerCase().includes(this.search.title)) {
-            return false
-          }
-        }
-
-        if (this.search.fromYear) {
-          if (el.release_date.substring(0, 4) < this.search.fromYear) {
-            return false
-          }
-        }
-
-        if (this.search.toYear) {
-          if (el.release_date.substring(0, 4) > this.search.toYear) {
-            return false
-          }
-        }
-
-        if (this.search.genre != 'all') {
-          if (!el.genre_ids.includes(Number(this.search.genre))) {
-            return false
-          }
-        }
-
-        return true
-      })
-    },
   },
 
   async created() {
     try {
       this.moviesTopRated = await getTopRated()
       this.moviesUpComing = await getUpComing()
-      this.baseList = [...this.moviesUpComing, ...this.moviesTopRated]
     } catch (error) {
       console.error('Erro ao buscar filmes:', error)
     }
@@ -83,6 +53,22 @@ export default {
   methods: {
     searchData(search: FilterData) {
       this.search = search
+      this.loading = true
+      if (!this.isFilteringActive) {
+        this.discoveredMovies = []
+        return
+      }
+      this.getDiscoveredMovies()
+    },
+
+    async getDiscoveredMovies() {
+      try {
+        this.discoveredMovies = await getMoviesBySearch(this.search)
+      } catch (error) {
+        console.error('Erro ao buscar filmes:', error)
+      } finally {
+        this.loading = false
+      }
     },
   },
 }
@@ -103,10 +89,21 @@ export default {
       </section>
 
       <section v-if="isFilteringActive" class="flex flex-col gap-10">
-        <CardList
-          :title="'Filtered Movies'"
-          :movies="filteredMovies"
-        ></CardList>
+        <p v-if="loading" class="text-primaryHeading text-fs-3">
+          Carregando...
+        </p>
+        <p
+          v-else-if="discoveredMovies.length === 0"
+          class="text-primaryHeading text-fs-3"
+        >
+          Nenhum filme encontrado
+        </p>
+        <div v-else>
+          <CardList
+            :title="'Filtered Movies'"
+            :movies="discoveredMovies"
+          ></CardList>
+        </div>
       </section>
     </main>
   </div>
