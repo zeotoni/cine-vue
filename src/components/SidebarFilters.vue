@@ -12,6 +12,7 @@ export default {
         fromYear: '',
         toYear: '',
       } as FilterData,
+      debounce: 0,
     }
   },
 
@@ -35,7 +36,10 @@ export default {
     },
 
     updateSearch() {
-      this.$emit('update:search', this.search)
+      clearTimeout(this.debounce)
+      this.debounce = setTimeout(() => {
+        this.$emit('update:search', this.search)
+      }, 300)
     },
   },
 }
