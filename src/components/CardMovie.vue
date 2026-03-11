@@ -1,4 +1,5 @@
 <script lang="ts">
+import fallbackImg from '@/assets/images/no-poster.png'
 import { genreMap } from '@/constants/genres'
 import type MovieCardData from '@/interfaces/MovieCardData'
 import { Star } from 'lucide-vue-next'
@@ -13,7 +14,9 @@ export default {
   },
   methods: {
     getImgUrl(path: string) {
-      return `https://image.tmdb.org/t/p/original${path}`
+      return path == null
+        ? fallbackImg
+        : `https://image.tmdb.org/t/p/original${path}`
     },
     getGenreName(id: number) {
       return genreMap[id] || 'Unknown'
@@ -26,6 +29,7 @@ export default {
   <div class="rounded-xl overflow-hidden w-full h-full">
     <picture>
       <img
+        class="aspect-2/3"
         :src="getImgUrl(cardData.poster_path)"
         :alt="`Imagem do filme ` + cardData.title"
       />
@@ -35,7 +39,7 @@ export default {
       class="p-2 flex flex-col h-[110px] lg:h-[140px] justify-between bg-primaryCardBg"
     >
       <h4 class="text-primaryHeading text-fs-1 font-fw3 line-clamp-2 mb-2">
-        {{ cardData.title }}
+        {{ cardData.title || 'Untitled movie' }}
       </h4>
 
       <div class="flex flex-col mt-1 text-primaryText">
