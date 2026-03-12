@@ -25,6 +25,10 @@ export default {
       moviesTopRated: [] as MovieCardData[],
       moviesUpComing: [] as MovieCardData[],
       discoveredMovies: [] as MovieCardData[],
+      topRatedPage: 1,
+      upcomingPage: 1,
+      discoverPage: 1,
+
       search: { ...defaultFilters },
       loading: false,
     }
@@ -43,8 +47,8 @@ export default {
 
   async created() {
     try {
-      this.moviesTopRated = await getTopRated()
-      this.moviesUpComing = await getUpComing()
+      this.moviesTopRated = await getTopRated(this.topRatedPage)
+      this.moviesUpComing = await getUpComing(this.upcomingPage)
     } catch (error) {
       console.error('Erro ao buscar filmes:', error)
     }
@@ -63,11 +67,42 @@ export default {
 
     async getDiscoveredMovies() {
       try {
-        this.discoveredMovies = await getMoviesBySearch(this.search)
+        this.discoveredMovies = await getMoviesBySearch(
+          this.search,
+          this.discoverPage,
+        )
       } catch (error) {
         console.error('Erro ao buscar filmes:', error)
       } finally {
         this.loading = false
+      }
+    },
+
+    async loadMore(category: string) {
+      try {
+        if (category == 'upComing') {
+          this.upcomingPage += 1
+          let newPageMovies: MovieCardData[] = []
+          newPageMovies = await getUpComing(this.upcomingPage)
+          this.moviesUpComing.push(...newPageMovies)
+        }
+        if (category == 'topRated') {
+          this.topRatedPage += 1
+          let newPageMovies: MovieCardData[] = []
+          newPageMovies = await getTopRated(this.topRatedPage)
+          this.moviesTopRated.push(...newPageMovies)
+        }
+        if (category == 'filtered') {
+          this.discoverPage += 1
+          let newPageMovies: MovieCardData[] = []
+          newPageMovies = await getMoviesBySearch(
+            this.search,
+            this.discoverPage,
+          )
+          this.discoveredMovies.push(...newPageMovies)
+        }
+      } catch (error) {
+        console.error('Erro ao buscar filmes:', error)
       }
     },
   },
@@ -84,8 +119,18 @@ export default {
     <main class="lg:w-[75%] p-4 md:p-6 lg:p-8">
       <section v-if="!isFilteringActive" class="flex flex-col gap-10">
         <FeaturedMovie></FeaturedMovie>
-        <CardList :title="'Top Rated'" :movies="moviesTopRated"></CardList>
-        <CardList :title="'Upcoming'" :movies="moviesUpComing"></CardList>
+        <CardList
+          :title="'Top Rated'"
+          :movies="moviesTopRated"
+          :category="'topRated'"
+          @load-more="loadMore"
+        ></CardList>
+        <CardList
+          :title="'Upcoming'"
+          :movies="moviesUpComing"
+          :category="'upComing'"
+          @load-more="loadMore"
+        ></CardList>
       </section>
 
       <section v-if="isFilteringActive" class="flex flex-col gap-10">
@@ -102,6 +147,8 @@ export default {
           <CardList
             :title="'Filtered Movies'"
             :movies="discoveredMovies"
+            :category="'filtered'"
+            @load-more="loadMore"
           ></CardList>
         </div>
       </section>

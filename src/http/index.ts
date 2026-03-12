@@ -17,27 +17,27 @@ export async function getPopularMovies() {
   return popularMovies
 }
 
-export async function getTopRated() {
-  const response = await tmdb.get('/movie/top_rated')
+export async function getTopRated(page: number) {
+  const response = await tmdb.get(`/movie/top_rated?page=${page}`)
   const topRatedMovies: MovieCardData[] = response.data.results
 
   return topRatedMovies
 }
 
-export async function getUpComing() {
-  const response = await tmdb.get('/movie/upcoming')
+export async function getUpComing(page: number) {
+  const response = await tmdb.get(`/movie/upcoming?page=${page}`)
   const upcomingMovies: MovieCardData[] = response.data.results
 
   return upcomingMovies
 }
 
-export async function getMoviesBySearch(filter: FilterData) {
+export async function getMoviesBySearch(filter: FilterData, page: number) {
   const params: Record<string, string | number> = {}
 
   if (filter.title.trim() !== '') {
     params.query = filter.title
 
-    const response = await tmdb.get(`search/movie`, {
+    const response = await tmdb.get(`search/movie?page=${page}`, {
       params,
     })
     const foundMovies: MovieCardData[] = response.data.results
@@ -59,7 +59,7 @@ export async function getMoviesBySearch(filter: FilterData) {
 
   params.sort_by = 'release_date.asc'
 
-  const response = await tmdb.get(`discover/movie`, {
+  const response = await tmdb.get(`discover/movie?page=${page}`, {
     params,
   })
   const foundMovies: MovieCardData[] = response.data.results
