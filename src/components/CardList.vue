@@ -2,11 +2,13 @@
 import type MovieCardData from '@/interfaces/MovieCardData'
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import { type PropType } from 'vue'
+import CardLoadMore from './CardLoadMore.vue'
 import CardMovie from './CardMovie.vue'
 
 export default {
   components: {
     CardMovie,
+    CardLoadMore,
     ChevronRight,
     ChevronLeft,
   },
@@ -19,7 +21,13 @@ export default {
       type: Array as PropType<MovieCardData[]>,
       required: true,
     },
+    category: {
+      type: String,
+      required: true,
+    },
   },
+
+  emits: ['loadMore'],
   data() {
     return {
       scrollEnd: true,
@@ -69,6 +77,9 @@ export default {
     >
       <li v-for="movie in movies" :key="movie.title" class="snap-start">
         <CardMovie :cardData="movie" />
+      </li>
+      <li>
+        <CardLoadMore @load-more="$emit('loadMore', category)"></CardLoadMore>
       </li>
     </ul>
 
