@@ -22,12 +22,27 @@ export default {
 
   data() {
     return {
-      moviesTopRated: [] as MovieCardData[],
-      moviesUpComing: [] as MovieCardData[],
-      discoveredMovies: [] as MovieCardData[],
-      topRatedPage: 1,
-      upcomingPage: 1,
-      discoverPage: 1,
+      category: {
+        topRated: {
+          page: 1,
+          loading: false,
+          movies: [] as MovieCardData[],
+          fetch: (page: number) => getTopRated(page),
+        },
+        upComing: {
+          page: 1,
+          loading: false,
+          movies: [] as MovieCardData[],
+          fetch: (page: number) => getUpComing(page),
+        },
+        filtered: {
+          page: 1,
+          loading: false,
+          movies: [] as MovieCardData[],
+          fetch: (page: number, search: FilterData) =>
+            getMoviesBySearch(page, search),
+        },
+      },
 
       search: { ...defaultFilters },
       loading: false,
@@ -47,8 +62,12 @@ export default {
 
   async created() {
     try {
-      this.moviesTopRated = await getTopRated(this.topRatedPage)
-      this.moviesUpComing = await getUpComing(this.upcomingPage)
+      this.category.topRated.movies = await getTopRated(
+        this.category.topRated.page,
+      )
+      this.category.upComing.movies = await getUpComing(
+        this.category.upComing.page,
+      )
     } catch (error) {
       console.error('Erro ao buscar filmes:', error)
     }
@@ -59,7 +78,7 @@ export default {
       this.search = search
       this.loading = true
       if (!this.isFilteringActive) {
-        this.discoveredMovies = []
+        this.category.filtered.movies = []
         return
       }
       this.getDiscoveredMovies()
@@ -67,9 +86,9 @@ export default {
 
     async getDiscoveredMovies() {
       try {
-        this.discoveredMovies = await getMoviesBySearch(
+        this.category.filtered.movies = await getMoviesBySearch(
+          this.category.filtered.page,
           this.search,
-          this.discoverPage,
         )
       } catch (error) {
         console.error('Erro ao buscar filmes:', error)
@@ -79,28 +98,17 @@ export default {
     },
 
     async loadMore(category: 'upComing' | 'topRated' | 'filtered') {
+      let currCategory = this.category[category]
       try {
-        switch (category) {
-          case 'upComing': {
-            this.upcomingPage += 1
-            this.moviesUpComing.push(...(await getUpComing(this.upcomingPage)))
-            break
-          }
-          case 'topRated': {
-            this.topRatedPage += 1
-            this.moviesTopRated.push(...(await getTopRated(this.topRatedPage)))
-            break
-          }
-          case 'filtered': {
-            this.discoverPage += 1
-            this.discoveredMovies.push(
-              ...(await getMoviesBySearch(this.search, this.discoverPage)),
-            )
-            break
-          }
-        }
+        currCategory.loading = true
+        currCategory.page += 1
+        currCategory.movies.push(
+          ...(await currCategory.fetch(currCategory.page, this.search)),
+        )
       } catch (error) {
         console.error('Erro ao buscar filmes:', error)
+      } finally {
+        currCategory.loading = false
       }
     },
   },
@@ -119,24 +127,29 @@ export default {
         <FeaturedMovie></FeaturedMovie>
         <CardList
           :title="'Top Rated'"
-          :movies="moviesTopRated"
+          :movies="category.topRated.movies"
           :category="'topRated'"
+          :loading="category.topRated.loading"
           @load-more="loadMore"
         ></CardList>
         <CardList
           :title="'Upcoming'"
-          :movies="moviesUpComing"
+          :movies="category.upComing.movies"
           :category="'upComing'"
+          :loading="category.upComing.loading"
           @load-more="loadMore"
         ></CardList>
       </section>
 
       <section v-if="isFilteringActive" class="flex flex-col gap-10">
-        <p v-if="loading" class="text-primaryHeading text-fs-3">
+        <p
+          v-if="loading"
+          class="text-primaryHeading text-center text-fs-2 font-fw3 line-clamp-2 mt-"
+        >
           Carregando...
         </p>
         <p
-          v-else-if="discoveredMovies.length === 0"
+          v-else-if="category.filtered.movies.length === 0"
           class="text-primaryHeading text-fs-3"
         >
           Nenhum filme encontrado
@@ -144,8 +157,9 @@ export default {
         <div v-else>
           <CardList
             :title="'Filtered Movies'"
-            :movies="discoveredMovies"
+            :movies="category.filtered.movies"
             :category="'filtered'"
+            :loading="category.filtered.loading"
             @load-more="loadMore"
           ></CardList>
         </div>

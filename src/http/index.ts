@@ -17,21 +17,21 @@ export async function getPopularMovies() {
   return popularMovies
 }
 
-export async function getTopRated(page: number) {
+export async function getTopRated(page: number, filter?: FilterData) {
   const response = await tmdb.get(`/movie/top_rated?page=${page}`)
   const topRatedMovies: MovieCardData[] = response.data.results
 
   return topRatedMovies
 }
 
-export async function getUpComing(page: number) {
+export async function getUpComing(page: number, filter?: FilterData) {
   const response = await tmdb.get(`/movie/upcoming?page=${page}`)
   const upcomingMovies: MovieCardData[] = response.data.results
 
   return upcomingMovies
 }
 
-export async function getMoviesBySearch(filter: FilterData, page: number) {
+export async function getMoviesBySearch(page: number, filter: FilterData) {
   const params: Record<string, string | number> = {}
 
   if (filter.title.trim() !== '') {

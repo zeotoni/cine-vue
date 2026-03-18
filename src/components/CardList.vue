@@ -25,6 +25,10 @@ export default {
       type: String,
       required: true,
     },
+    loading: {
+      type: Boolean,
+      required: true,
+    },
   },
 
   emits: ['loadMore'],
@@ -78,7 +82,13 @@ export default {
       <li v-for="movie in movies" :key="movie.title" class="snap-start">
         <CardMovie :cardData="movie" />
       </li>
-      <li>
+      <li
+        v-if="loading"
+        class="rounded-xl overflow-hidden w-full h-full bg-gray-700 flex flex-col justify-center items-center"
+      >
+        <p class="text-primaryHeading text-fs-1">Carregando...</p>
+      </li>
+      <li v-else>
         <CardLoadMore @load-more="$emit('loadMore', category)"></CardLoadMore>
       </li>
     </ul>
