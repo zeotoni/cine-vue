@@ -78,28 +78,26 @@ export default {
       }
     },
 
-    async loadMore(category: string) {
+    async loadMore(category: 'upComing' | 'topRated' | 'filtered') {
       try {
-        if (category == 'upComing') {
-          this.upcomingPage += 1
-          let newPageMovies: MovieCardData[] = []
-          newPageMovies = await getUpComing(this.upcomingPage)
-          this.moviesUpComing.push(...newPageMovies)
-        }
-        if (category == 'topRated') {
-          this.topRatedPage += 1
-          let newPageMovies: MovieCardData[] = []
-          newPageMovies = await getTopRated(this.topRatedPage)
-          this.moviesTopRated.push(...newPageMovies)
-        }
-        if (category == 'filtered') {
-          this.discoverPage += 1
-          let newPageMovies: MovieCardData[] = []
-          newPageMovies = await getMoviesBySearch(
-            this.search,
-            this.discoverPage,
-          )
-          this.discoveredMovies.push(...newPageMovies)
+        switch (category) {
+          case 'upComing': {
+            this.upcomingPage += 1
+            this.moviesUpComing.push(...(await getUpComing(this.upcomingPage)))
+            break
+          }
+          case 'topRated': {
+            this.topRatedPage += 1
+            this.moviesTopRated.push(...(await getTopRated(this.topRatedPage)))
+            break
+          }
+          case 'filtered': {
+            this.discoverPage += 1
+            this.discoveredMovies.push(
+              ...(await getMoviesBySearch(this.search, this.discoverPage)),
+            )
+            break
+          }
         }
       } catch (error) {
         console.error('Erro ao buscar filmes:', error)
