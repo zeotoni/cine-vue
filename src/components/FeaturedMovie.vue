@@ -1,22 +1,22 @@
 <script lang="ts">
 import { genreMap } from '@/constants/genres'
 import { getPopularMovies } from '@/http'
-import type MovieCardData from '@/interfaces/MovieCardData'
+import type { MovieCard } from '@/interfaces/MovieCardData'
 import { Star } from 'lucide-vue-next'
 export default {
   components: { Star },
 
   data() {
     return {
-      movie: {} as MovieCardData,
+      movie: {} as MovieCard,
     }
   },
 
   async mounted() {
     try {
       const movies = await getPopularMovies()
-      const r = Math.floor(Math.random() * movies.length)
-      this.movie = movies[r]
+      const r = Math.floor(Math.random() * movies.results.length)
+      this.movie = movies.results[r]
     } catch (error) {
       console.error('Erro ao buscar filme em destaque:', error)
     }
