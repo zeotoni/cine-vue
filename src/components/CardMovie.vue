@@ -1,14 +1,14 @@
 <script lang="ts">
 import fallbackImg from '@/assets/images/no-poster.png'
 import { genreMap } from '@/constants/genres'
-import type MovieCardData from '@/interfaces/MovieCardData'
+import type { MovieCard } from '@/interfaces/MovieCardData'
 import { Star } from 'lucide-vue-next'
 import type { PropType } from 'vue'
 export default {
   components: { Star },
   props: {
     cardData: {
-      type: Object as PropType<MovieCardData>,
+      type: Object as PropType<MovieCard>,
       required: true,
     },
   },

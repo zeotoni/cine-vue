@@ -12,21 +12,21 @@ const tmdb = axios.create({
 
 export async function getPopularMovies() {
   const response = await tmdb.get('/movie/popular')
-  const popularMovies: MovieCardData[] = response.data.results
+  const popularMovies: MovieCardData = response.data
 
   return popularMovies
 }
 
 export async function getTopRated(page: number, filter?: FilterData) {
   const response = await tmdb.get(`/movie/top_rated?page=${page}`)
-  const topRatedMovies: MovieCardData[] = response.data.results
+  const topRatedMovies: MovieCardData = response.data
 
   return topRatedMovies
 }
 
 export async function getUpComing(page: number, filter?: FilterData) {
   const response = await tmdb.get(`/movie/upcoming?page=${page}`)
-  const upcomingMovies: MovieCardData[] = response.data.results
+  const upcomingMovies: MovieCardData = response.data
 
   return upcomingMovies
 }
@@ -40,7 +40,7 @@ export async function getMoviesBySearch(page: number, filter: FilterData) {
     const response = await tmdb.get(`search/movie?page=${page}`, {
       params,
     })
-    const foundMovies: MovieCardData[] = response.data.results
+    const foundMovies: MovieCardData = response.data
 
     return foundMovies
   }
@@ -62,7 +62,7 @@ export async function getMoviesBySearch(page: number, filter: FilterData) {
   const response = await tmdb.get(`discover/movie?page=${page}`, {
     params,
   })
-  const foundMovies: MovieCardData[] = response.data.results
+  const foundMovies: MovieCardData = response.data
 
   return foundMovies
 }

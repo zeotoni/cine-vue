@@ -1,7 +1,7 @@
 <script lang="ts">
 import { getMoviesBySearch, getTopRated, getUpComing } from '@/http'
 import type FilterData from '@/interfaces/FilterData'
-import type MovieCardData from '@/interfaces/MovieCardData'
+import type { MovieCard } from '@/interfaces/MovieCardData'
 import CardList from './CardList.vue'
 import FeaturedMovie from './FeaturedMovie.vue'
 import SidebarFilters from './SidebarFilters.vue'
@@ -26,19 +26,22 @@ export default {
         topRated: {
           page: 1,
           loading: false,
-          movies: [] as MovieCardData[],
+          movies: [] as MovieCard[],
+          totalPages: 0,
           fetch: (page: number) => getTopRated(page),
         },
         upComing: {
           page: 1,
           loading: false,
-          movies: [] as MovieCardData[],
+          movies: [] as MovieCard[],
+          totalPages: 0,
           fetch: (page: number) => getUpComing(page),
         },
         filtered: {
           page: 1,
           loading: false,
-          movies: [] as MovieCardData[],
+          movies: [] as MovieCard[],
+          totalPages: 0,
           fetch: (page: number, search: FilterData) =>
             getMoviesBySearch(page, search),
         },
@@ -62,12 +65,13 @@ export default {
 
   async created() {
     try {
-      this.category.topRated.movies = await getTopRated(
-        this.category.topRated.page,
-      )
-      this.category.upComing.movies = await getUpComing(
-        this.category.upComing.page,
-      )
+      const topRatedMovies = await getTopRated(this.category.topRated.page)
+      this.category.topRated.movies = topRatedMovies.results
+      this.category.topRated.totalPages = topRatedMovies.total_pages
+
+      const upcomingMovies = await getUpComing(this.category.upComing.page)
+      this.category.upComing.movies = upcomingMovies.results
+      this.category.upComing.totalPages = upcomingMovies.total_pages
     } catch (error) {
       console.error('Erro ao buscar filmes:', error)
     }
@@ -85,11 +89,16 @@ export default {
     },
 
     async getDiscoveredMovies() {
+      let currCategory = this.category.filtered
       try {
-        this.category.filtered.movies = await getMoviesBySearch(
-          this.category.filtered.page,
+        const filteredMovies = await getMoviesBySearch(
+          currCategory.page,
           this.search,
         )
+
+        currCategory.movies = filteredMovies.results
+        currCategory.totalPages = filteredMovies.total_pages
+        currCategory.page = filteredMovies.page
       } catch (error) {
         console.error('Erro ao buscar filmes:', error)
       } finally {
@@ -101,15 +110,24 @@ export default {
       let currCategory = this.category[category]
       try {
         currCategory.loading = true
-        currCategory.page += 1
-        currCategory.movies.push(
-          ...(await currCategory.fetch(currCategory.page, this.search)),
+
+        const newMovies = await currCategory.fetch(
+          currCategory.page + 1,
+          this.search,
         )
+
+        currCategory.movies.push(...newMovies.results)
+
+        currCategory.page = newMovies.page
       } catch (error) {
         console.error('Erro ao buscar filmes:', error)
       } finally {
         currCategory.loading = false
       }
+    },
+
+    hasMorePages(category: 'upComing' | 'topRated' | 'filtered'): boolean {
+      return this.category[category].page < this.category[category].totalPages
     },
   },
 }
@@ -130,6 +148,7 @@ export default {
           :movies="category.topRated.movies"
           :category="'topRated'"
           :loading="category.topRated.loading"
+          :show-load-more="hasMorePages('topRated')"
           @load-more="loadMore"
         ></CardList>
         <CardList
@@ -137,6 +156,7 @@ export default {
           :movies="category.upComing.movies"
           :category="'upComing'"
           :loading="category.upComing.loading"
+          :show-load-more="hasMorePages('upComing')"
           @load-more="loadMore"
         ></CardList>
       </section>
@@ -160,6 +180,7 @@ export default {
             :movies="category.filtered.movies"
             :category="'filtered'"
             :loading="category.filtered.loading"
+            :show-load-more="hasMorePages('filtered')"
             @load-more="loadMore"
           ></CardList>
         </div>

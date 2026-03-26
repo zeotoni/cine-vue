@@ -1,5 +1,5 @@
 <script lang="ts">
-import type MovieCardData from '@/interfaces/MovieCardData'
+import type { MovieCard } from '@/interfaces/MovieCardData'
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import { type PropType } from 'vue'
 import CardLoadMore from './CardLoadMore.vue'
@@ -18,7 +18,7 @@ export default {
       required: true,
     },
     movies: {
-      type: Array as PropType<MovieCardData[]>,
+      type: Array as PropType<MovieCard[]>,
       required: true,
     },
     category: {
@@ -26,6 +26,10 @@ export default {
       required: true,
     },
     loading: {
+      type: Boolean,
+      required: true,
+    },
+    showLoadMore: {
       type: Boolean,
       required: true,
     },
@@ -88,7 +92,7 @@ export default {
       >
         <p class="text-primaryHeading text-fs-1">Carregando...</p>
       </li>
-      <li v-else>
+      <li v-else-if="showLoadMore">
         <CardLoadMore @load-more="$emit('loadMore', category)"></CardLoadMore>
       </li>
     </ul>
