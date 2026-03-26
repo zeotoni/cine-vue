@@ -79,12 +79,20 @@ export default {
 
   methods: {
     searchData(search: FilterData) {
+      let currCategory = this.category.filtered
+
       this.search = search
-      this.loading = true
+
       if (!this.isFilteringActive) {
-        this.category.filtered.movies = []
         return
       }
+
+      currCategory.page = 1
+      currCategory.totalPages = 0
+      currCategory.movies = []
+
+      this.loading = true
+
       this.getDiscoveredMovies()
     },
 
