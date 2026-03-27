@@ -1,46 +1,78 @@
-# cinevue
+# 🎬 Cine Vue
 
-This template should help get you started developing with Vue 3 in Vite.
+Aplicação web para explorar filmes utilizando a API do TMDB, desenvolvida com Vue e foco em experiência do usuário e arquitetura de frontend.
 
-## Recommended IDE Setup
+---
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+## 🚀 Features
 
-## Type Support for `.vue` Imports in TS
+- 🔎 Busca de filmes por título
+- 🎭 Filtros por gênero e ano
+- ⭐ Listas de filmes:
+  - Top Rated
+  - Upcoming
+- 🔄 Paginação com padrão **Load More**
+- 🎯 Atualização dinâmica sem reload da página
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+---
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+## 🧠 Destaque Técnico
 
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+Uma das principais features do projeto é a implementação de um padrão de paginação moderno:
 
-## Customize configuration
+### 🔄 Load More Pagination
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+- Substitui paginação tradicional e infinite scroll
+- Botão "Load More" como último item do carrossel
+- Novos filmes são adicionados sem perder posição
+- Controle de estado por categoria
+- Oculta automaticamente quando não há mais páginas disponíveis
 
-## Project Setup
+---
 
-```sh
-pnpm install
-```
+## ⚙️ Tecnologias
 
-### Compile and Hot-Reload for Development
+- Vue 3
+- TypeScript
+- TailwindCSS
+- TMDB API
 
-```sh
-pnpm dev
-```
+---
 
-### Type-Check, Compile and Minify for Production
+## 🧩 Arquitetura
 
-```sh
-pnpm build
-```
+O projeto utiliza separação clara entre:
 
-### Lint with [ESLint](https://eslint.org/)
+- 📡 Camada de API (requisições)
+- 🧠 Estado da aplicação (categorias e paginação)
+- 🎨 Componentes reutilizáveis
 
-```sh
-pnpm lint
-```
+### Destaques:
+
+- Estado derivado (`hasMorePages`)
+- Controle de loading por categoria
+- Reset de paginação ao aplicar filtros
+- Reutilização de lógica entre diferentes listas de filmes
+
+---
+
+## 🌐 Live Demo
+
+Acesse a aplicação online:
+
+👉 https://cine-vue-coral.vercel.app/
+
+
+---
+
+## 📸 Preview
+
+### 🎬 Home
+<img src="./src/assets/images/cine-vue.png" width="600" />
+
+### 🔄 Load More
+<img src="./src/assets/images/cine-vue.gif" width="600" />
+
+## 👨‍💻 Autor
+
+Desenvolvido por [Ezequiel Otoni](https://www.linkedin.com/in/zeotoni/)
