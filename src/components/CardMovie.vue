@@ -12,6 +12,12 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      imgState: 'loading' as 'loading' | 'success' | 'error',
+      fallbackImg,
+    }
+  },
   methods: {
     getImgUrl(path: string) {
       return path == null
@@ -26,14 +32,23 @@ export default {
 </script>
 
 <template>
-  <div class="rounded-xl overflow-hidden w-full h-full">
-    <picture>
+  <div class="rounded-xl overflow-hidden w-full h-100px">
+    <section class="relative aspect-2/3">
+      <div
+        v-show="imgState == 'loading'"
+        class="absolute inset-0 shimmer z-10"
+      ></div>
       <img
-        class="aspect-2/3"
-        :src="getImgUrl(cardData.poster_path)"
+        v-show="imgState !== 'loading'"
+        class="h-full w-full object-cover"
+        :src="
+          imgState == 'error' ? fallbackImg : getImgUrl(cardData.poster_path)
+        "
         :alt="`Imagem do filme ` + cardData.title"
+        @load="imgState = 'success'"
+        @error="imgState = 'error'"
       />
-    </picture>
+    </section>
 
     <div
       class="p-2 flex flex-col h-[110px] lg:h-[140px] justify-between bg-primaryCardBg"

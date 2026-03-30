@@ -2,6 +2,7 @@
 @import 'tailwindcss';
 @import './css/colors.css';
 @import './css/typografy.css';
+@import './css/shimmer.css';
 
 body {
   font-family: var(--font-poppins);
