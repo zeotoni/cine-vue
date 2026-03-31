@@ -12,6 +12,7 @@ export default {
       required: true,
     },
   },
+  emits: ['expandMovie'],
   data() {
     return {
       imgState: 'loading' as 'loading' | 'success' | 'error',
@@ -32,7 +33,10 @@ export default {
 </script>
 
 <template>
-  <div class="rounded-xl overflow-hidden w-full h-100px">
+  <div
+    class="rounded-xl overflow-hidden w-full h-100px"
+    @click="$emit('expandMovie', cardData)"
+  >
     <section class="relative aspect-2/3">
       <div
         v-show="imgState == 'loading'"

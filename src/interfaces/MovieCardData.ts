@@ -1,4 +1,5 @@
 export interface MovieCard {
+  id: number
   title: string
   genre_ids: number[]
   release_date: string

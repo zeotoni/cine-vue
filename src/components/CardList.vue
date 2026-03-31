@@ -35,7 +35,7 @@ export default {
     },
   },
 
-  emits: ['loadMore'],
+  emits: ['loadMore', 'expandMovie'],
   data() {
     return {
       scrollEnd: true,
@@ -84,7 +84,10 @@ export default {
       @scroll="handleScroll"
     >
       <li v-for="movie in movies" :key="movie.title" class="snap-start">
-        <CardMovie :cardData="movie" />
+        <CardMovie
+          :cardData="movie"
+          @expand-movie="$emit('expandMovie', movie)"
+        />
       </li>
       <li
         v-if="loading"

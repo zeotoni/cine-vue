@@ -11,6 +11,20 @@ export default {
       type: Object as PropType<MovieCard>,
       required: true,
     },
+    shouldOpen: Boolean,
+  },
+  watch: {
+    shouldOpen(newVal: boolean) {
+      const dialog = this.$refs.movieModal as HTMLDialogElement
+
+      if (!dialog) return
+
+      if (newVal) {
+        dialog.showModal()
+      } else {
+        dialog.close()
+      }
+    },
   },
   methods: {
     getImgUrl(path: string) {
@@ -26,7 +40,7 @@ export default {
 </script>
 
 <template>
-  <dialog open class="m-auto w-[80%] overflow-hidden rounded-xl">
+  <dialog ref="movieModal" class="m-auto w-[80%] overflow-hidden rounded-xl">
     <picture>
       <img
         class="object-cover w-full h-[400px] sm:h-[500px] md:h-[600px] rounded-xl"

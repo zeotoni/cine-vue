@@ -4,6 +4,7 @@ import type FilterData from '@/interfaces/FilterData'
 import type { MovieCard } from '@/interfaces/MovieCardData'
 import CardList from './CardList.vue'
 import FeaturedMovie from './FeaturedMovie.vue'
+import MovieDetailsModal from './MovieDetailsModal.vue'
 import SidebarFilters from './SidebarFilters.vue'
 
 const defaultFilters: FilterData = {
@@ -18,6 +19,7 @@ export default {
     FeaturedMovie,
     CardList,
     SidebarFilters,
+    MovieDetailsModal,
   },
 
   data() {
@@ -49,6 +51,8 @@ export default {
 
       search: { ...defaultFilters },
       loading: false,
+      openModal: false,
+      selectedMovie: {} as MovieCard,
     }
   },
 
@@ -134,6 +138,11 @@ export default {
       }
     },
 
+    expandMovie(movie: MovieCard) {
+      this.openModal = true
+      this.selectedMovie = movie
+    },
+
     hasMorePages(category: 'upComing' | 'topRated' | 'filtered'): boolean {
       return this.category[category].page < this.category[category].totalPages
     },
@@ -157,6 +166,7 @@ export default {
           :category="'topRated'"
           :loading="category.topRated.loading"
           :show-load-more="hasMorePages('topRated')"
+          @expand-movie="expandMovie"
           @load-more="loadMore"
         ></CardList>
         <CardList
@@ -165,8 +175,13 @@ export default {
           :category="'upComing'"
           :loading="category.upComing.loading"
           :show-load-more="hasMorePages('upComing')"
+          @expand-movie="expandMovie"
           @load-more="loadMore"
         ></CardList>
+        <MovieDetailsModal
+          :should-open="openModal"
+          :movie="selectedMovie"
+        ></MovieDetailsModal>
       </section>
 
       <section v-if="isFilteringActive" class="flex flex-col gap-10">
@@ -189,6 +204,7 @@ export default {
             :category="'filtered'"
             :loading="category.filtered.loading"
             :show-load-more="hasMorePages('filtered')"
+            @expand-movie="expandMovie"
             @load-more="loadMore"
           ></CardList>
         </div>
