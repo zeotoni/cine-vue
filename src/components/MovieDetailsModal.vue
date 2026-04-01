@@ -2,10 +2,10 @@
 import fallbackImg from '@/assets/images/no-poster.png'
 import { genreMap } from '@/constants/genres'
 import type { MovieCard } from '@/interfaces/MovieCardData'
-import { Star } from 'lucide-vue-next'
+import { Star, X } from 'lucide-vue-next'
 import type { PropType } from 'vue'
 export default {
-  components: { Star },
+  components: { Star, X },
   props: {
     movie: {
       type: Object as PropType<MovieCard>,
@@ -13,16 +13,22 @@ export default {
     },
     shouldOpen: Boolean,
   },
+  emits: ['close'],
   watch: {
     shouldOpen(newVal: boolean) {
+      console.log('shouldOpen mudou:', newVal)
       const dialog = this.$refs.movieModal as HTMLDialogElement
 
       if (!dialog) return
 
       if (newVal) {
-        dialog.showModal()
+        if (!dialog.open) {
+          dialog.showModal()
+        }
       } else {
-        dialog.close()
+        if (dialog.open) {
+          dialog.close()
+        }
       }
     },
   },
@@ -35,14 +41,34 @@ export default {
     getGenreName(id: number) {
       return genreMap[id] || 'Unknown'
     },
+    closeModal() {
+      console.log('close')
+
+      this.$emit('close')
+    },
   },
 }
 </script>
 
 <template>
-  <dialog ref="movieModal" class="m-auto w-[80%] overflow-hidden rounded-xl">
+  <dialog
+    ref="movieModal"
+    class="relative m-auto w-[80%] overflow-hidden rounded-xl"
+  >
+    <button
+      class="absolute m-2 :lg-m4 right-0 bg-black/60 backdrop-blur shadow-md border border-white/30 rounded"
+      @click="closeModal"
+    >
+      <X
+        class="w-5 h-5 md:w-8 md:h-8"
+        fill="#FFF"
+        color="#FFF"
+        aria-hidden="true"
+      />
+    </button>
     <picture>
       <img
+        :key="movie?.backdrop_path"
         class="object-cover w-full h-[400px] sm:h-[500px] md:h-[600px] rounded-xl"
         :src="getImgUrl(movie?.backdrop_path)"
         :alt="`Imagem do filme ` + movie?.title"
@@ -50,11 +76,11 @@ export default {
     </picture>
 
     <div
-      class="absolute inset-0 bg-gradient-to-t from-black to-transparent"
+      class="absolute inset-0 bg-gradient-to-t from-black to-transparent pointer-events-none"
     ></div>
 
     <div
-      class="absolute inset-0 flex flex-col justify-end p-4 sm:p-6 md:p-8 w-full"
+      class="absolute inset-0 flex flex-col justify-end p-4 sm:p-6 md:p-8 w-full pointer-events-none"
     >
       <h2 class="text-fs-4 font-fw3 text-primaryHeading mb-2">
         {{ movie?.title }}

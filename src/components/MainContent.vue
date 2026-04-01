@@ -181,6 +181,7 @@ export default {
         <MovieDetailsModal
           :should-open="openModal"
           :movie="selectedMovie"
+          @close="openModal = false"
         ></MovieDetailsModal>
       </section>
 
@@ -207,6 +208,11 @@ export default {
             @expand-movie="expandMovie"
             @load-more="loadMore"
           ></CardList>
+          <MovieDetailsModal
+            :should-open="openModal"
+            :movie="selectedMovie"
+            @close="openModal = false"
+          ></MovieDetailsModal>
         </div>
       </section>
     </main>
