@@ -14,9 +14,14 @@ export default {
     shouldOpen: Boolean,
   },
   emits: ['close'],
+  data() {
+    return {
+      handleClick: null as null | ((e: MouseEvent) => void),
+      handleKeyUp: null as null | ((e: KeyboardEvent) => void),
+    }
+  },
   watch: {
     shouldOpen(newVal: boolean) {
-      console.log('shouldOpen mudou:', newVal)
       const dialog = this.$refs.movieModal as HTMLDialogElement
 
       if (!dialog) return
@@ -32,6 +37,39 @@ export default {
       }
     },
   },
+  mounted() {
+    this.handleClick = (e: MouseEvent) => {
+      const dialog = this.$refs.movieModal as HTMLDialogElement
+
+      if (!dialog) return
+
+      if (e.target === dialog) {
+        this.$emit('close')
+      }
+    }
+
+    const dialog = this.$refs.movieModal as HTMLDialogElement
+    dialog.addEventListener('click', this.handleClick)
+
+    this.handleKeyUp = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        this.$emit('close')
+      }
+    }
+
+    document.addEventListener('keyup', this.handleKeyUp)
+  },
+  unmounted() {
+    const dialog = this.$refs.movieModal as HTMLDialogElement
+
+    if (dialog && this.handleClick) {
+      dialog.removeEventListener('click', this.handleClick)
+    }
+
+    if (this.handleKeyUp) {
+      document.removeEventListener('keyup', this.handleKeyUp)
+    }
+  },
   methods: {
     getImgUrl(path: string) {
       return path == null
@@ -42,8 +80,6 @@ export default {
       return genreMap[id] || 'Unknown'
     },
     closeModal() {
-      console.log('close')
-
       this.$emit('close')
     },
   },
@@ -56,7 +92,7 @@ export default {
     class="relative m-auto w-[80%] overflow-hidden rounded-xl"
   >
     <button
-      class="absolute m-2 :lg-m4 right-0 bg-black/60 backdrop-blur shadow-md border border-white/30 rounded"
+      class="absolute m-2 lg:m-4 right-0 bg-black/60 backdrop-blur shadow-md border border-white/30 rounded"
       @click="closeModal"
     >
       <X

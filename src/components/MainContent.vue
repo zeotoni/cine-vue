@@ -53,6 +53,7 @@ export default {
       loading: false,
       openModal: false,
       selectedMovie: {} as MovieCard,
+      scrollY: 0,
     }
   },
 
@@ -139,8 +140,17 @@ export default {
     },
 
     expandMovie(movie: MovieCard) {
+      this.scrollY = window.scrollY
       this.openModal = true
       this.selectedMovie = movie
+    },
+
+    handleCloseModal() {
+      this.openModal = false
+
+      this.$nextTick(() => {
+        window.scrollTo(0, this.scrollY)
+      })
     },
 
     hasMorePages(category: 'upComing' | 'topRated' | 'filtered'): boolean {
@@ -181,7 +191,7 @@ export default {
         <MovieDetailsModal
           :should-open="openModal"
           :movie="selectedMovie"
-          @close="openModal = false"
+          @close="handleCloseModal"
         ></MovieDetailsModal>
       </section>
 
@@ -211,7 +221,7 @@ export default {
           <MovieDetailsModal
             :should-open="openModal"
             :movie="selectedMovie"
-            @close="openModal = false"
+            @close="handleCloseModal"
           ></MovieDetailsModal>
         </div>
       </section>
