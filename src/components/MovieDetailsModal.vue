@@ -17,7 +17,7 @@ export default {
   data() {
     return {
       handleClick: null as null | ((e: MouseEvent) => void),
-      handleKeyUp: null as null | ((e: KeyboardEvent) => void),
+      handleKeyDown: null as null | ((e: KeyboardEvent) => void),
     }
   },
   watch: {
@@ -26,9 +26,14 @@ export default {
 
       if (!dialog) return
 
+      const focusableElements = this.getFocusableEl(dialog)
+      const firstFocusableElement = focusableElements[0]
+
       if (newVal) {
         if (!dialog.open) {
           dialog.showModal()
+
+          if (firstFocusableElement) firstFocusableElement.focus()
         }
       } else {
         if (dialog.open) {
@@ -38,6 +43,8 @@ export default {
     },
   },
   mounted() {
+    const dialog = this.$refs.movieModal as HTMLDialogElement
+
     this.handleClick = (e: MouseEvent) => {
       const dialog = this.$refs.movieModal as HTMLDialogElement
 
@@ -48,16 +55,22 @@ export default {
       }
     }
 
-    const dialog = this.$refs.movieModal as HTMLDialogElement
-    dialog.addEventListener('click', this.handleClick)
+    this.handleKeyDown = (e: KeyboardEvent) => {
+      const dialog = this.$refs.movieModal as HTMLDialogElement
 
-    this.handleKeyUp = (e: KeyboardEvent) => {
+      if (!dialog) return
+
       if (e.key === 'Escape') {
         this.$emit('close')
       }
+      if (e.key === 'Tab') {
+        const focusableElements = this.getFocusableEl(dialog)
+        if (focusableElements.length === 1) e.preventDefault()
+      }
     }
 
-    document.addEventListener('keyup', this.handleKeyUp)
+    dialog.addEventListener('click', this.handleClick)
+    document.addEventListener('keydown', this.handleKeyDown)
   },
   unmounted() {
     const dialog = this.$refs.movieModal as HTMLDialogElement
@@ -66,8 +79,8 @@ export default {
       dialog.removeEventListener('click', this.handleClick)
     }
 
-    if (this.handleKeyUp) {
-      document.removeEventListener('keyup', this.handleKeyUp)
+    if (this.handleKeyDown) {
+      document.removeEventListener('keydown', this.handleKeyDown)
     }
   },
   methods: {
@@ -81,6 +94,12 @@ export default {
     },
     closeModal() {
       this.$emit('close')
+    },
+    getFocusableEl(dialog: HTMLElement) {
+      const nodesEl = dialog.querySelectorAll(
+        `[tabindex]:not([tabindex="-1"]),a[href]:not([disabled]),button:not([disabled]),textarea:not([disabled]),input:not([disabled]),select:not([disabled])`,
+      )
+      return [...nodesEl] as HTMLElement[]
     },
   },
 }
