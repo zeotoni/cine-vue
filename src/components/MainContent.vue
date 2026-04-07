@@ -1,5 +1,5 @@
 <script lang="ts">
-import { getMoviesBySearch, getTopRated, getUpComing } from '@/http'
+import { getById, getMoviesBySearch, getTopRated, getUpComing } from '@/http'
 import type FilterData from '@/interfaces/FilterData'
 import type { MovieCard } from '@/interfaces/MovieCardData'
 import CardList from './CardList.vue'
@@ -52,6 +52,7 @@ export default {
       search: { ...defaultFilters },
       loading: false,
       openModal: false,
+      loadingDetails: false,
       selectedMovie: {} as MovieCard,
       scrollY: 0,
     }
@@ -139,10 +140,19 @@ export default {
       }
     },
 
-    expandMovie(movie: MovieCard) {
+    async expandMovie(movie: MovieCard) {
       this.scrollY = window.scrollY
+      this.loadingDetails = true
       this.openModal = true
-      this.selectedMovie = movie
+
+      try {
+        const newMovie = await getById(movie.id)
+        this.selectedMovie = newMovie
+      } catch (error) {
+        console.error('Erro ao buscar filmes:', error)
+      } finally {
+        this.loadingDetails = false
+      }
     },
 
     handleCloseModal() {
@@ -191,6 +201,7 @@ export default {
         <MovieDetailsModal
           :should-open="openModal"
           :movie="selectedMovie"
+          :loading="loadingDetails"
           @close="handleCloseModal"
         ></MovieDetailsModal>
       </section>
@@ -221,6 +232,7 @@ export default {
           <MovieDetailsModal
             :should-open="openModal"
             :movie="selectedMovie"
+            :loading="loadingDetails"
             @close="handleCloseModal"
           ></MovieDetailsModal>
         </div>

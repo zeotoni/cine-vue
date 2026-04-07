@@ -1,5 +1,6 @@
 import type FilterData from '@/interfaces/FilterData'
 import type MovieCardData from '@/interfaces/MovieCardData'
+import type { MovieCard } from '@/interfaces/MovieCardData'
 import axios from 'axios'
 
 const tmdb = axios.create({
@@ -65,4 +66,11 @@ export async function getMoviesBySearch(page: number, filter: FilterData) {
   const foundMovies: MovieCardData = response.data
 
   return foundMovies
+}
+
+export async function getById(id: number) {
+  const response = await tmdb.get(`/movie/${id}`)
+  const movie: MovieCard = response.data
+
+  return movie
 }
