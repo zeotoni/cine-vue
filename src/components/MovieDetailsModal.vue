@@ -117,7 +117,7 @@ export default {
   >
     <div v-if="shouldOpen" class="relative h-[80vh] w-full">
       <button
-        class="absolute m-2 lg:m-4 right-0 bg-black/60 backdrop-blur shadow-md border border-white/30 rounded"
+        class="absolute z-10 m-2 lg:m-4 right-0 bg-black/60 backdrop-blur shadow-md border border-white/30 rounded"
         @click="closeModal"
       >
         <X
@@ -154,7 +154,7 @@ export default {
 
       <div
         v-show="!loading && imgState !== 'loading'"
-        class="absolute inset-0 flex flex-col justify-end p-4 sm:p-6 md:p-8 w-full pointer-events-none"
+        class="absolute inset-0 flex flex-col justify-end p-4 sm:p-6 md:p-8 w-full"
       >
         <h2 class="text-fs-4 font-fw3 text-primaryHeading mb-2">
           {{ movie?.title }}
