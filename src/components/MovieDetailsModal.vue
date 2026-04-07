@@ -115,19 +115,18 @@ export default {
     ref="movieModal"
     class="relative m-auto w-[80%] max-h-[90vh] overflow-hidden rounded-xl"
   >
+    <button
+      class="absolute z-10 m-2 lg:m-4 right-0 bg-black/60 backdrop-blur shadow-md border border-white/30 rounded"
+      @click="closeModal"
+    >
+      <X
+        class="w-5 h-5 md:w-8 md:h-8"
+        fill="#FFF"
+        color="#FFF"
+        aria-hidden="true"
+      />
+    </button>
     <div v-if="shouldOpen" class="relative h-[80vh] w-full">
-      <button
-        class="absolute z-10 m-2 lg:m-4 right-0 bg-black/60 backdrop-blur shadow-md border border-white/30 rounded"
-        @click="closeModal"
-      >
-        <X
-          class="w-5 h-5 md:w-8 md:h-8"
-          fill="#FFF"
-          color="#FFF"
-          aria-hidden="true"
-        />
-      </button>
-
       <div
         class="absolute inset-0 shimmer z-40 pointer-events-none"
         :class="loading || imgState === 'loading' ? 'opacity-100' : 'opacity-0'"
