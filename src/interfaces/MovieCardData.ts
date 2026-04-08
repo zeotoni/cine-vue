@@ -1,6 +1,11 @@
 export interface MovieCard {
+  id: number
   title: string
   genre_ids: number[]
+  genres: {
+    id: number
+    name: string
+  }[]
   release_date: string
   overview: string
   backdrop_path: string
