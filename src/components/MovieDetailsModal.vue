@@ -177,10 +177,10 @@ export default {
           </div>
 
           <span
-            v-for="id in movie?.genre_ids"
-            :key="id"
+            v-for="genre in movie?.genres"
+            :key="genre.id"
             class="text-fs-1 font-fw2 text-primaryHeading px-2 py-0.5 bg-white/30 rounded-full"
-            >{{ getGenreName(id) }}</span
+            >{{ genre.name }}</span
           >
         </div>
         <p
