@@ -144,6 +144,7 @@ export default {
       this.scrollY = window.scrollY
       this.loadingDetails = true
       this.openModal = true
+      document.body.style.overflow = 'hidden'
 
       try {
         const newMovie = await getById(movie.id)
@@ -157,6 +158,7 @@ export default {
 
     handleCloseModal() {
       this.openModal = false
+      document.body.style.overflow = 'auto'
 
       this.$nextTick(() => {
         window.scrollTo(0, this.scrollY)
