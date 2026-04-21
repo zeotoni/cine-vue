@@ -2,10 +2,10 @@
 import fallbackImg from '@/assets/images/no-poster.png'
 import { genreMap } from '@/constants/genres'
 import type { MovieCard } from '@/interfaces/MovieCardData'
-import { Star, X } from 'lucide-vue-next'
+import { ChevronDown, ChevronUp, Star, X } from 'lucide-vue-next'
 import type { PropType } from 'vue'
 export default {
-  components: { Star, X },
+  components: { Star, X, ChevronUp, ChevronDown },
   props: {
     movie: {
       type: Object as PropType<MovieCard>,
@@ -19,6 +19,7 @@ export default {
     return {
       imgState: 'loading' as 'loading' | 'success' | 'error',
       fallbackImg,
+      isExpanded: false,
 
       handleClick: null as null | ((e: MouseEvent) => void),
       handleKeyDown: null as null | ((e: KeyboardEvent) => void),
@@ -50,6 +51,7 @@ export default {
     },
   },
   mounted() {
+    this.isExpanded = false
     const dialog = this.$refs.movieModal as HTMLDialogElement
 
     this.handleClick = (e: MouseEvent) => {
@@ -99,12 +101,16 @@ export default {
     },
     closeModal() {
       this.$emit('close')
+      this.isExpanded = false
     },
     getFocusableEl(dialog: HTMLElement) {
       const nodesEl = dialog.querySelectorAll(
         `[tabindex]:not([tabindex="-1"]),a[href]:not([disabled]),button:not([disabled]),textarea:not([disabled]),input:not([disabled]),select:not([disabled])`,
       )
       return [...nodesEl] as HTMLElement[]
+    },
+    expandOverview() {
+      this.isExpanded = !this.isExpanded
     },
   },
 }
@@ -120,7 +126,7 @@ export default {
       @click="closeModal"
     >
       <X
-        class="w-5 h-5 md:w-8 md:h-8"
+        class="w-5 h-5 md:w-6 md:h-6"
         fill="#FFF"
         color="#FFF"
         aria-hidden="true"
@@ -153,17 +159,27 @@ export default {
 
       <div
         v-show="!loading && imgState !== 'loading'"
+        :class="{
+          'bg-black/60 backdrop-blur overflow-y-auto justify-start pt-16':
+            isExpanded,
+        }"
         class="absolute inset-0 flex flex-col justify-end p-4 sm:p-6 md:p-8 w-full"
       >
-        <h2 class="text-fs-4 font-fw3 text-primaryHeading mb-2">
+        <h2
+          v-if="!isExpanded"
+          class="text-fs-4 font-fw3 text-primaryHeading mb-2"
+        >
           {{ movie?.title }}
         </h2>
 
-        <time datetime="1999" class="text-primaryText text-fs-1 mb-2">{{
-          movie?.release_date
-        }}</time>
+        <time
+          v-if="!isExpanded"
+          datetime="1999"
+          class="text-primaryText text-fs-1 mb-2"
+          >{{ movie?.release_date }}</time
+        >
 
-        <div class="flex flex-wrap gap-3 items-center mb-4">
+        <div v-if="!isExpanded" class="flex flex-wrap gap-3 items-center mb-4">
           <div class="flex gap-1 items-center">
             <Star
               class="w-5 h-5"
@@ -183,11 +199,38 @@ export default {
             >{{ genre.name }}</span
           >
         </div>
+
+        <button
+          v-if="isExpanded"
+          type="button"
+          class="flex flex-col justify-center items-center mb-2 cursor-pointer lg:hidden"
+          @click="expandOverview"
+        >
+          <ChevronUp class="text-primaryText"></ChevronUp>
+          <span class="text-primaryText text-fs-1">Fechar</span>
+        </button>
+
         <p
-          class="text-primaryText text-fs-2 max-w-3xl leading-relaxed line-clamp-4 overflow-y-auto scrollbar-hide md:line-clamp-none [-ms-overflow-style:'none'] [scrollbar-width:'none'] [-webkit-overflow-scrolling:touch] [&::-webkit-scrollbar]:hidden"
+          :class="{ 'line-clamp-4': !isExpanded }"
+          :style="{
+            lineHeight: isExpanded
+              ? 'var(--leading-relaxed)'
+              : 'var(--leading-tight)',
+          }"
+          class="text-primaryText text-fs-2 max-w-3xl scrollbar-hide md:line-clamp-none [-ms-overflow-style:'none'] [scrollbar-width:'none'] [-webkit-overflow-scrolling:touch] [&::-webkit-scrollbar]:hidden"
         >
           {{ movie?.overview }}
         </p>
+
+        <button
+          v-if="!isExpanded"
+          type="button"
+          class="flex flex-col justify-center items-center mt-2 cursor-pointer lg:hidden"
+          @click="expandOverview"
+        >
+          <span class="text-primaryText text-fs-1">Ler mais</span>
+          <ChevronDown class="text-primaryText"></ChevronDown>
+        </button>
       </div>
     </div>
   </dialog>
