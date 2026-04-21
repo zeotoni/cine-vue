@@ -142,6 +142,8 @@ export default {
 
     async expandMovie(movie: MovieCard) {
       this.scrollY = window.scrollY
+      window.scrollTo(0, 0)
+
       this.loadingDetails = true
       this.openModal = true
       document.body.style.overflow = 'hidden'
