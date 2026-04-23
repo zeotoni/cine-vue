@@ -26,7 +26,15 @@ export async function getTopRated(page: number, filter?: FilterData) {
 }
 
 export async function getUpComing(page: number, filter?: FilterData) {
-  const response = await tmdb.get(`/movie/upcoming?page=${page}`)
+  const today = new Date().toISOString().split('T')[0]
+
+  const response = await tmdb.get(`discover/movie?page=${page}`, {
+    params: {
+      page,
+      'primary_release_date.gte': today,
+      sort_by: 'popularity.desc',
+    },
+  })
   const upcomingMovies: MovieCardData = response.data
 
   return upcomingMovies
