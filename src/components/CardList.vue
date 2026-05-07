@@ -13,10 +13,6 @@ export default {
     ChevronLeft,
   },
   props: {
-    title: {
-      type: String,
-      required: true,
-    },
     movies: {
       type: Array as PropType<MovieCard[]>,
       required: true,
@@ -76,8 +72,6 @@ export default {
 
 <template>
   <section>
-    <h3 class="text-fs-3 font-fw3 text-primaryHeading mb-3">{{ title }}</h3>
-
     <ul
       ref="scrollContainer"
       class="grid grid-flow-col gap-2 lg:gap-4 auto-cols-[45%] sm:auto-cols-[40%] md:auto-cols-[22%] lg:auto-cols-[18%] xl:auto-cols-[15%] snap-x snap-mandatory overflow-x-auto scroll-smooth [-ms-overflow-style:'none'] [scrollbar-width:'none'] [-webkit-overflow-scrolling:touch] [&::-webkit-scrollbar]:hidden"
