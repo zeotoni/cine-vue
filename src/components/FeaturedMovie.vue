@@ -1,7 +1,8 @@
 <script lang="ts">
 import { genreMap } from '@/constants/genres'
-import { getPopularMovies } from '@/http'
+import { getFeaturedMovies } from '@/http'
 import type { MovieCard } from '@/interfaces/MovieCardData'
+import { regionStore } from '@/store/region'
 import { Star } from 'lucide-vue-next'
 export default {
   components: { Star },
@@ -9,12 +10,27 @@ export default {
   data() {
     return {
       movie: {} as MovieCard,
+      regionStore,
     }
+  },
+
+  watch: {
+    'regionStore.region': {
+      async handler() {
+        try {
+          const movies = await getFeaturedMovies()
+          const r = Math.floor(Math.random() * movies.results.length)
+          this.movie = movies.results[r]
+        } catch (error) {
+          console.error('Erro ao buscar filme em destaque:', error)
+        }
+      },
+    },
   },
 
   async mounted() {
     try {
-      const movies = await getPopularMovies()
+      const movies = await getFeaturedMovies()
       const r = Math.floor(Math.random() * movies.results.length)
       this.movie = movies.results[r]
     } catch (error) {
