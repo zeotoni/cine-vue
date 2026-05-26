@@ -154,11 +154,7 @@ export default {
       ></div>
 
       <picture>
-        <source
-          media="(min-width: 1024px)"
-          :srcset="getBackdropImg(movie)"
-          class=""
-        />
+        <source media="(min-width: 1024px)" :srcset="getBackdropImg(movie)" />
         <img
           :key="movie?.id"
           class="h-full w-full object-cover"
