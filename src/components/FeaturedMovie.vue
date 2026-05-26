@@ -1,4 +1,5 @@
 <script lang="ts">
+import fallbackImg from '@/assets/images/no-poster.png'
 import { genreMap } from '@/constants/genres'
 import { getFeaturedMovies } from '@/http'
 import type { MovieCard } from '@/interfaces/MovieCardData'
@@ -39,8 +40,23 @@ export default {
   },
 
   methods: {
-    getImgUrl(path: string) {
-      return `https://image.tmdb.org/t/p/original${path}`
+    getBackdropImg(movie: MovieCard) {
+      if (movie.backdrop_path) {
+        return `https://image.tmdb.org/t/p/original${movie.backdrop_path}`
+      } else if (movie.poster_path) {
+        return `https://image.tmdb.org/t/p/original${movie.poster_path}`
+      } else {
+        return fallbackImg
+      }
+    },
+    getPosterImg(movie: MovieCard) {
+      if (movie.poster_path) {
+        return `https://image.tmdb.org/t/p/original${movie.poster_path}`
+      } else if (movie.backdrop_path) {
+        return `https://image.tmdb.org/t/p/original${movie.backdrop_path}`
+      } else {
+        return fallbackImg
+      }
     },
     getGenreName(id: number) {
       return genreMap[id] || 'Unknown'
@@ -55,9 +71,10 @@ export default {
     class="relative w-full overflow-hidden rounded-xl"
   >
     <picture>
+      <source media="(min-width: 1024px)" :srcset="getBackdropImg(movie)" />
       <img
         class="rounded-xl object-cover w-full h-[400px] sm:h-[500px] md:h-[600px]"
-        :src="getImgUrl(movie?.backdrop_path)"
+        :src="getPosterImg(movie)"
         :alt="`Imagem do filme ` + movie?.title"
       />
     </picture>
