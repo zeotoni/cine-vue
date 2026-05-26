@@ -228,6 +228,7 @@ export default {
     handleCloseModal() {
       this.openModal = false
       document.body.style.overflow = 'auto'
+      this.selectedMovie = {} as MovieCard
 
       this.$nextTick(() => {
         window.scrollTo(0, this.scrollY)
