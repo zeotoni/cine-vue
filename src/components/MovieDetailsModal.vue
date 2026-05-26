@@ -93,8 +93,23 @@ export default {
     }
   },
   methods: {
-    getImgUrl(path: string) {
-      return path ? `https://image.tmdb.org/t/p/original${path}` : fallbackImg
+    getBackdropImg(movie: MovieCard) {
+      if (movie.backdrop_path) {
+        return `https://image.tmdb.org/t/p/original${movie.backdrop_path}`
+      } else if (movie.poster_path) {
+        return `https://image.tmdb.org/t/p/original${movie.poster_path}`
+      } else {
+        return fallbackImg
+      }
+    },
+    getPosterImg(movie: MovieCard) {
+      if (movie.poster_path) {
+        return `https://image.tmdb.org/t/p/original${movie.poster_path}`
+      } else if (movie.backdrop_path) {
+        return `https://image.tmdb.org/t/p/original${movie.backdrop_path}`
+      } else {
+        return fallbackImg
+      }
     },
     getGenreName(id: number) {
       return genreMap[id] || 'Unknown'
@@ -141,12 +156,13 @@ export default {
       <picture>
         <source
           media="(min-width: 1024px)"
-          :srcset="getImgUrl(movie?.backdrop_path)"
+          :srcset="getBackdropImg(movie)"
+          class=""
         />
         <img
           :key="movie?.id"
           class="h-full w-full object-cover"
-          :src="getImgUrl(movie?.poster_path)"
+          :src="getPosterImg(movie)"
           :alt="`Imagem do filme ` + movie?.title"
           @load="imgState = 'success'"
           @error="imgState = 'error'"
