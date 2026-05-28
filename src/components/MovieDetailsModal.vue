@@ -20,6 +20,8 @@ export default {
       imgState: 'loading' as 'loading' | 'success' | 'error',
       fallbackImg,
       isExpanded: false,
+      overflowsText: false,
+      resizeObserver: null as ResizeObserver | null,
 
       handleClick: null as null | ((e: MouseEvent) => void),
       handleKeyDown: null as null | ((e: KeyboardEvent) => void),
@@ -40,6 +42,8 @@ export default {
 
           if (firstFocusableElement) firstFocusableElement.focus()
         }
+
+        this.$nextTick(() => this.checkOverflow())
       } else {
         if (dialog.open) {
           dialog.close()
@@ -48,6 +52,17 @@ export default {
     },
     movie() {
       this.imgState = 'loading'
+      this.isExpanded = false
+      this.$nextTick(() => this.checkOverflow())
+    },
+    imgState(val) {
+      if (val === 'success') {
+        this.$nextTick(() => {
+          const el = this.$refs.overviewText as HTMLParagraphElement
+          if (el && this.resizeObserver) this.resizeObserver.observe(el)
+          this.checkOverflow()
+        })
+      }
     },
   },
   mounted() {
@@ -78,6 +93,8 @@ export default {
       }
     }
 
+    this.resizeObserver = new ResizeObserver(() => this.checkOverflow())
+
     dialog.addEventListener('click', this.handleClick)
     document.addEventListener('keydown', this.handleKeyDown)
   },
@@ -91,6 +108,8 @@ export default {
     if (this.handleKeyDown) {
       document.removeEventListener('keydown', this.handleKeyDown)
     }
+
+    if (this.resizeObserver) this.resizeObserver.disconnect()
   },
   methods: {
     getBackdropImg(movie: MovieCard) {
@@ -126,6 +145,21 @@ export default {
     },
     expandOverview() {
       this.isExpanded = !this.isExpanded
+    },
+    checkOverflow() {
+      const el = this.$refs.overviewText as HTMLParagraphElement
+      if (!el) return
+
+      const lineHeight = Math.ceil(parseFloat(getComputedStyle(el).lineHeight))
+      const maxHeight = lineHeight * 4
+
+      el.style.webkitLineClamp = 'unset'
+      el.style.display = 'block'
+      const realHeight = el.scrollHeight
+      el.style.webkitLineClamp = ''
+      el.style.display = ''
+
+      this.overflowsText = realHeight > maxHeight + lineHeight * 0.5
     },
   },
 }
@@ -215,7 +249,7 @@ export default {
         <button
           v-if="isExpanded"
           type="button"
-          class="flex flex-col justify-center items-center mb-2 cursor-pointer lg:hidden"
+          class="flex flex-col justify-center items-center mb-2 cursor-pointer"
           @click="expandOverview"
         >
           <ChevronUp class="text-primaryText"></ChevronUp>
@@ -223,21 +257,22 @@ export default {
         </button>
 
         <p
+          ref="overviewText"
           :class="{ 'line-clamp-4': !isExpanded }"
           :style="{
             lineHeight: isExpanded
               ? 'var(--leading-relaxed)'
               : 'var(--leading-tight)',
           }"
-          class="text-primaryText text-fs-2 max-w-3xl scrollbar-hide md:line-clamp-none [-ms-overflow-style:'none'] [scrollbar-width:'none'] [-webkit-overflow-scrolling:touch] [&::-webkit-scrollbar]:hidden"
+          class="text-primaryText text-fs-2 max-w-3xl scrollbar-hide [-ms-overflow-style:'none'] [scrollbar-width:'none'] [-webkit-overflow-scrolling:touch] [&::-webkit-scrollbar]:hidden"
         >
           {{ movie?.overview }}
         </p>
 
         <button
-          v-if="!isExpanded"
+          v-if="!isExpanded && overflowsText"
           type="button"
-          class="flex flex-col justify-center items-center mt-2 cursor-pointer lg:hidden"
+          class="flex flex-col justify-center items-center mt-2 cursor-pointer"
           @click="expandOverview"
         >
           <span class="text-primaryText text-fs-1">Ler mais</span>
