@@ -2,6 +2,8 @@
 import fallbackImg from '@/assets/images/no-poster.png'
 import { genreMap } from '@/constants/genres'
 import type { MovieCard } from '@/interfaces/MovieCardData'
+import { getBackdropImg, getPosterImg } from '@/utils/movieImages'
+import { checkOverflow } from '@/utils/overviewExpand'
 import { ChevronDown, ChevronUp, Star, X } from 'lucide-vue-next'
 import type { PropType } from 'vue'
 export default {
@@ -20,7 +22,7 @@ export default {
       imgState: 'loading' as 'loading' | 'success' | 'error',
       fallbackImg,
       isExpanded: false,
-      overflowsText: false,
+      overflowsText: false as boolean | undefined,
       resizeObserver: null as ResizeObserver | null,
 
       handleClick: null as null | ((e: MouseEvent) => void),
@@ -113,22 +115,10 @@ export default {
   },
   methods: {
     getBackdropImg(movie: MovieCard) {
-      if (movie.backdrop_path) {
-        return `https://image.tmdb.org/t/p/original${movie.backdrop_path}`
-      } else if (movie.poster_path) {
-        return `https://image.tmdb.org/t/p/original${movie.poster_path}`
-      } else {
-        return fallbackImg
-      }
+      return getBackdropImg(movie)
     },
     getPosterImg(movie: MovieCard) {
-      if (movie.poster_path) {
-        return `https://image.tmdb.org/t/p/original${movie.poster_path}`
-      } else if (movie.backdrop_path) {
-        return `https://image.tmdb.org/t/p/original${movie.backdrop_path}`
-      } else {
-        return fallbackImg
-      }
+      return getPosterImg(movie)
     },
     getGenreName(id: number) {
       return genreMap[id] || 'Unknown'
@@ -150,16 +140,7 @@ export default {
       const el = this.$refs.overviewText as HTMLParagraphElement
       if (!el) return
 
-      const lineHeight = Math.ceil(parseFloat(getComputedStyle(el).lineHeight))
-      const maxHeight = lineHeight * 4
-
-      el.style.webkitLineClamp = 'unset'
-      el.style.display = 'block'
-      const realHeight = el.scrollHeight
-      el.style.webkitLineClamp = ''
-      el.style.display = ''
-
-      this.overflowsText = realHeight > maxHeight + lineHeight * 0.5
+      this.overflowsText = checkOverflow(el)
     },
   },
 }
