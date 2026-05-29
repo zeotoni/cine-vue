@@ -1,17 +1,22 @@
 <script lang="ts">
-import fallbackImg from '@/assets/images/no-poster.png'
 import { genreMap } from '@/constants/genres'
 import { getFeaturedMovies } from '@/http'
 import type { MovieCard } from '@/interfaces/MovieCardData'
 import { regionStore } from '@/store/region'
-import { Star } from 'lucide-vue-next'
+import { getBackdropImg, getPosterImg } from '@/utils/movieImages'
+import { checkOverflow } from '@/utils/overviewExpand'
+import { ChevronDown, ChevronUp, Star } from 'lucide-vue-next'
 export default {
-  components: { Star },
+  components: { Star, ChevronDown, ChevronUp },
 
   data() {
     return {
       movie: {} as MovieCard,
+      imgState: 'loading' as 'loading' | 'success' | 'error',
       regionStore,
+      isExpanded: false,
+      overflowsText: false as boolean | undefined,
+      resizeObserver: null as ResizeObserver | null,
     }
   },
 
@@ -27,9 +32,26 @@ export default {
         }
       },
     },
+    movie() {
+      this.imgState = 'loading'
+      this.isExpanded = false
+      this.$nextTick(() => this.checkOverflow())
+    },
+    imgState(val) {
+      if (val === 'success') {
+        this.$nextTick(() => {
+          const el = this.$refs.overviewText as HTMLParagraphElement
+          if (el && this.resizeObserver) this.resizeObserver.observe(el)
+          this.checkOverflow()
+        })
+      }
+    },
   },
 
   async mounted() {
+    this.isExpanded = false
+    this.resizeObserver = new ResizeObserver(() => this.checkOverflow())
+
     try {
       const movies = await getFeaturedMovies()
       const r = Math.floor(Math.random() * movies.results.length)
@@ -38,28 +60,27 @@ export default {
       console.error('Erro ao buscar filme em destaque:', error)
     }
   },
-
+  unmounted() {
+    if (this.resizeObserver) this.resizeObserver.disconnect()
+  },
   methods: {
     getBackdropImg(movie: MovieCard) {
-      if (movie.backdrop_path) {
-        return `https://image.tmdb.org/t/p/original${movie.backdrop_path}`
-      } else if (movie.poster_path) {
-        return `https://image.tmdb.org/t/p/original${movie.poster_path}`
-      } else {
-        return fallbackImg
-      }
+      return getBackdropImg(movie)
     },
     getPosterImg(movie: MovieCard) {
-      if (movie.poster_path) {
-        return `https://image.tmdb.org/t/p/original${movie.poster_path}`
-      } else if (movie.backdrop_path) {
-        return `https://image.tmdb.org/t/p/original${movie.backdrop_path}`
-      } else {
-        return fallbackImg
-      }
+      return getPosterImg(movie)
     },
     getGenreName(id: number) {
       return genreMap[id] || 'Unknown'
+    },
+    expandOverview() {
+      this.isExpanded = !this.isExpanded
+    },
+    checkOverflow() {
+      const el = this.$refs.overviewText as HTMLParagraphElement
+      if (!el) return
+
+      this.overflowsText = checkOverflow(el)
     },
   },
 }
@@ -76,6 +97,8 @@ export default {
         class="rounded-xl object-cover w-full h-[400px] sm:h-[500px] md:h-[600px]"
         :src="getPosterImg(movie)"
         :alt="`Imagem do filme ` + movie?.title"
+        @load="imgState = 'success'"
+        @error="imgState = 'error'"
       />
     </picture>
 
@@ -84,9 +107,14 @@ export default {
     ></div>
 
     <div
+      v-show="imgState !== 'loading'"
+      :class="{
+        'bg-black/60 backdrop-blur overflow-y-auto justify-start pt-16':
+          isExpanded,
+      }"
       class="absolute inset-0 flex flex-col justify-end p-4 sm:p-6 md:p-8 w-full"
     >
-      <div class="flex gap-2 items-center mb-2">
+      <div v-if="!isExpanded" class="flex gap-2 items-center mb-2">
         <span
           class="bg-blue-600 px-2 py-1 rounded-full text-primaryHeading text-fs-1"
           aria-label="Filme em destaque"
@@ -97,11 +125,14 @@ export default {
         }}</time>
       </div>
 
-      <h2 class="text-fs-4 font-fw3 text-primaryHeading mb-2">
+      <h2
+        v-if="!isExpanded"
+        class="text-fs-4 font-fw3 text-primaryHeading mb-2"
+      >
         {{ movie?.title }}
       </h2>
 
-      <div class="flex flex-wrap gap-3 items-center mb-4">
+      <div v-if="!isExpanded" class="flex flex-wrap gap-3 items-center mb-4">
         <div class="flex gap-1 items-center">
           <Star
             class="w-5 h-5"
@@ -121,11 +152,39 @@ export default {
           >{{ getGenreName(id) }}</span
         >
       </div>
+
+      <button
+        v-if="isExpanded"
+        type="button"
+        class="flex flex-col justify-center items-center mb-2 cursor-pointer"
+        @click="expandOverview"
+      >
+        <ChevronUp class="text-primaryText"></ChevronUp>
+        <span class="text-primaryText text-fs-1">Fechar</span>
+      </button>
+
       <p
-        class="text-primaryText text-fs-2 mb-6 max-w-3xl leading-relaxed line-clamp-4 overflow-y-auto scrollbar-hide md:line-clamp-none [-ms-overflow-style:'none'] [scrollbar-width:'none'] [-webkit-overflow-scrolling:touch] [&::-webkit-scrollbar]:hidden"
+        ref="overviewText"
+        :class="{ 'line-clamp-4': !isExpanded }"
+        :style="{
+          lineHeight: isExpanded
+            ? 'var(--leading-relaxed)'
+            : 'var(--leading-tight)',
+        }"
+        class="text-primaryText text-fs-2 max-w-3xl scrollbar-hide [-ms-overflow-style:'none'] [scrollbar-width:'none'] [-webkit-overflow-scrolling:touch] [&::-webkit-scrollbar]:hidden"
       >
         {{ movie?.overview }}
       </p>
+
+      <button
+        v-if="!isExpanded && overflowsText"
+        type="button"
+        class="flex flex-col justify-center items-center mt-2 cursor-pointer"
+        @click="expandOverview"
+      >
+        <span class="text-primaryText text-fs-1">Ler mais</span>
+        <ChevronDown class="text-primaryText"></ChevronDown>
+      </button>
     </div>
   </section>
 </template>
