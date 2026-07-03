@@ -40,7 +40,7 @@ export default {
     <section class="relative aspect-2/3">
       <div
         v-show="imgState == 'loading'"
-        class="absolute inset-0 shimmer z-10"
+        class="absolute inset-0 shimmer"
       ></div>
       <img
         v-show="imgState !== 'loading'"

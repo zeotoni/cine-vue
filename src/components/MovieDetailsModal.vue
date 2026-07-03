@@ -85,6 +85,7 @@ export default {
       const dialog = this.$refs.movieModal as HTMLDialogElement
 
       if (!dialog) return
+      if (!dialog.open) return
 
       if (e.key === 'Escape') {
         this.$emit('close')
