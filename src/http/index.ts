@@ -66,8 +66,7 @@ export async function getTopRated(page: number, filter?: FilterData) {
     params: {
       page,
       with_origin_country: regionStore.region,
-      sort_by: 'vote_average.desc',
-      'vote_average.gte': 1.0,
+      sort_by: 'vote_count.desc',
     },
   })
   const topRatedMovies: MovieCardData = response.data
