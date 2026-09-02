@@ -8,7 +8,7 @@ import { checkOverflow } from '@/utils/overviewExpand'
 import { ChevronDown, ChevronUp, Star } from 'lucide-vue-next'
 export default {
   components: { Star, ChevronDown, ChevronUp },
-
+  emits: ['imgState'],
   data() {
     return {
       movie: {} as MovieCard,
@@ -19,7 +19,6 @@ export default {
       resizeObserver: null as ResizeObserver | null,
     }
   },
-
   watch: {
     'regionStore.region': {
       async handler() {
@@ -88,13 +87,17 @@ export default {
 
 <template>
   <section
-    v-if="movie?.title"
-    class="relative w-full overflow-hidden rounded-xl"
+    class="relative overflow-hidden rounded-xl h-[400px] sm:h-[500px] md:h-[600px] w-full"
   >
-    <picture>
+    <div
+      v-show="imgState == 'loading'"
+      class="absolute inset-0 shimmer z-5"
+    ></div>
+
+    <picture v-if="movie.title">
       <source media="(min-width: 1024px)" :srcset="getBackdropImg(movie)" />
       <img
-        class="rounded-xl object-cover w-full h-[400px] sm:h-[500px] md:h-[600px]"
+        class="rounded-xl object-cover w-full h-full"
         :src="getPosterImg(movie)"
         :alt="`Imagem do filme ` + movie?.title"
         @load="imgState = 'success'"
@@ -107,7 +110,7 @@ export default {
     ></div>
 
     <div
-      v-show="imgState !== 'loading'"
+      v-if="movie?.title"
       :class="{
         'bg-black/60 backdrop-blur overflow-y-auto justify-start pt-16':
           isExpanded,
