@@ -8,7 +8,7 @@ import { checkOverflow } from '@/utils/overviewExpand'
 import { ChevronDown, ChevronUp, Star } from 'lucide-vue-next'
 export default {
   components: { Star, ChevronDown, ChevronUp },
-  emits: ['imgState'],
+  emits: ['imgState', 'loadFinished'],
   data() {
     return {
       movie: {} as MovieCard,
@@ -28,6 +28,8 @@ export default {
           this.movie = movies.results[r]
         } catch (error) {
           console.error('Erro ao buscar filme em destaque:', error)
+        } finally {
+          this.$emit('loadFinished', true)
         }
       },
     },
@@ -57,6 +59,8 @@ export default {
       this.movie = movies.results[r]
     } catch (error) {
       console.error('Erro ao buscar filme em destaque:', error)
+    } finally {
+      this.$emit('loadFinished', true)
     }
   },
   unmounted() {
