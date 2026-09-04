@@ -326,7 +326,7 @@ export default {
             :title="'Filtered Movies'"
             :movies="category.filtered.movies"
             :category="'filtered'"
-            :loading="category.filtered.loading"
+            :loading="category.filtered.loadingMore"
             :show-load-more="hasMorePages('filtered')"
             @expand-movie="expandMovie"
             @load-more="loadMore"
