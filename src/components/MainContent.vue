@@ -7,6 +7,7 @@ import CardList from './CardList.vue'
 import FeaturedMovie from './FeaturedMovie.vue'
 import MovieDetailsModal from './MovieDetailsModal.vue'
 import SidebarFilters from './SidebarFilters.vue'
+import CardListSkeleton from './skeletons/CardListSkeleton.vue'
 
 const defaultFilters: FilterData = {
   title: '',
@@ -21,6 +22,7 @@ export default {
     CardList,
     SidebarFilters,
     MovieDetailsModal,
+    CardListSkeleton,
   },
 
   data() {
@@ -254,12 +256,7 @@ export default {
         <FeaturedMovie></FeaturedMovie>
         <div>
           <h3 class="text-fs-3 font-fw3 text-primaryHeading mb-3">Top Rated</h3>
-          <p
-            v-if="category.topRated.loading"
-            class="text-primaryHeading text-center text-fs-2 font-fw3 line-clamp-2"
-          >
-            Carregando...
-          </p>
+          <CardListSkeleton v-if="category.topRated.loading"></CardListSkeleton>
           <p
             v-else-if="category.topRated.movies.length === 0"
             class="text-primaryHeading text-fs-3"
@@ -278,12 +275,7 @@ export default {
         </div>
         <div>
           <h3 class="text-fs-3 font-fw3 text-primaryHeading mb-3">Upcoming</h3>
-          <p
-            v-if="category.upComing.loading"
-            class="text-primaryHeading text-center text-fs-2 font-fw3 line-clamp-2"
-          >
-            Carregando...
-          </p>
+          <CardListSkeleton v-if="category.upComing.loading"></CardListSkeleton>
           <p
             v-else-if="category.upComing.movies.length === 0"
             class="text-primaryHeading text-fs-3"

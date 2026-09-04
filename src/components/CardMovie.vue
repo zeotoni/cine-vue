@@ -38,10 +38,7 @@ export default {
     @click="$emit('expandMovie', cardData)"
   >
     <section class="relative aspect-2/3">
-      <div
-        v-show="imgState == 'loading'"
-        class="absolute inset-0 shimmer"
-      ></div>
+      <div v-show="imgState === 'loading'" class="absolute shimmer"></div>
       <img
         v-show="imgState !== 'loading'"
         class="h-full w-full object-cover"
@@ -57,24 +54,48 @@ export default {
     <div
       class="p-2 flex flex-col h-[110px] lg:h-[140px] justify-between bg-primaryCardBg"
     >
-      <h4 class="text-primaryHeading text-fs-1 font-fw3 line-clamp-2 mb-2">
-        {{ cardData.title || 'Untitled movie' }}
-      </h4>
-
-      <div class="flex flex-col mt-1 text-primaryText">
-        <span class="text-fs-1">
-          {{ cardData.release_date.slice(0, 4) }}
-        </span>
-
-        <span class="text-fs-1 font-fw2 text-rating flex gap-1">
-          <Star
-            class="w-5 h-5"
-            fill="#FBBF24"
-            color="#FBBF24"
-            aria-hidden="true"
-          />
-          {{ cardData.vote_average.toFixed(1) }}</span
+      <div class="relative h-5">
+        <h4
+          v-show="imgState !== 'loading'"
+          class="text-primaryHeading text-fs-1 font-fw3 line-clamp-2 mb-2"
         >
+          {{ cardData.title || 'Untitled movie' }}
+        </h4>
+        <div
+          v-show="imgState === 'loading'"
+          class="absolute inset-0 rounded shimmer"
+        ></div>
+      </div>
+
+      <div class="flex flex-col mt-1 gap-2 text-primaryText relative">
+        <div class="relative h-5">
+          <span v-show="imgState !== 'loading'" class="text-fs-1">
+            {{ cardData.release_date.slice(0, 4) }}
+          </span>
+          <div
+            v-show="imgState === 'loading'"
+            class="absolute inset-0 rounded shimmer"
+          ></div>
+        </div>
+
+        <div class="relative h-5">
+          <span
+            v-show="imgState !== 'loading'"
+            class="text-fs-1 font-fw2 text-rating flex gap-1"
+          >
+            <Star
+              class="w-5 h-5"
+              fill="#FBBF24"
+              color="#FBBF24"
+              aria-hidden="true"
+            />
+            {{ cardData.vote_average.toFixed(1) }}</span
+          >
+          <div
+            v-show="imgState === 'loading'"
+            class="absolute inset-0 rounded shimmer"
+          ></div>
+        </div>
       </div>
     </div>
   </div>
