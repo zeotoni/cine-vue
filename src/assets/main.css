@@ -5,6 +5,10 @@
 @import './css/typografy.css';
 @import './css/shimmer.css';
 
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
   font-family: var(--font-poppins);
   background-color: var(--color-primaryBg);

@@ -126,12 +126,8 @@ export default {
 
       if (this.isDropDownOpen) {
         await this.$nextTick()
-        const selected = this.$el.querySelector('input[type="radio"]:checked')
-        const li = this.$el.querySelector('li[aria-selected="true"]')
 
-        if (selected) {
-          selected.scrollIntoView({ block: 'center' })
-        }
+        const li = this.$el.querySelector('li[aria-selected="true"]')
 
         if (li) {
           li.focus()
@@ -144,7 +140,7 @@ export default {
 
 <template>
   <header
-    class="sticky flex justify-between items-center p-8 top-0 z-10 bg-gray-900/80 backdrop-blur-sm border-b text-white"
+    class="sticky flex justify-between items-center py-8 px-4 md:px-6 lg:px-8 top-0 z-10 bg-gray-900/80 backdrop-blur-sm border-b text-white"
   >
     <h1 class="text-2xl font-bold">CineVue</h1>
 
