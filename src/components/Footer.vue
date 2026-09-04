@@ -4,7 +4,7 @@ export default {}
 
 <template>
   <footer
-    class="border-t border-white/20 text-white p-4 md:p-6 lg:p-8 flex flex-col gap-2 bg-black/30"
+    class="mt-20 border-t border-white/20 text-white p-4 md:p-6 lg:p-8 flex flex-col gap-2 bg-black/30"
   >
     <div
       class="flex flex-col md:flex-row md:items-start md:justify-between gap-8"
